@@ -26,13 +26,12 @@ func _process(delta):
 		tiles_set = false
 		emit_signal("request_board_tiles", board_tiles)
 	
-	if Input.is_action_just_pressed("space"):
-		current_tile = (current_tile + 1) % board_tiles.size()
-		emit_signal("player_step", board_tiles[current_tile])
-	
 	if Input.is_action_just_pressed("lc"):
 		emit_signal("roll_dice")
 
 func _on_rolled_value(val: int):
-	print("Rolled a %d" % val)
+	var target: int = (current_tile + val)%board_tiles.size()
+	while current_tile != target:
+		current_tile = (current_tile + 1) % board_tiles.size()
+		emit_signal("player_step", board_tiles[current_tile])
 	

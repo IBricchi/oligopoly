@@ -11,19 +11,24 @@ func _ready():
 
 func _physics_process(delta):
 	if visible and linear_velocity == Vector3.ZERO:
-		var dir: Vector3 = rotation.normalized()
-		if dir == Vector3.UP:
-			emit_signal("rolled_value", 1)
-		elif dir == Vector3.LEFT:
-			emit_signal("rolled_value", 2)
-		elif dir == Vector3.RIGHT:
-			emit_signal("rolled_value", 3)
-		elif dir == Vector3.FORWARD:
-			emit_signal("rolled_value", 4)
-		elif dir == Vector3.BACK:
-			emit_signal("rolled_value", 5)
+		var rot: Vector3 = ((rotation * 180 / PI).round())
+		rot.x = fposmod(rot.x,360)
+		rot.y = fposmod(rot.y,360)
+		rot.z = fposmod(rot.z,360)
+		var val: int;
+		if rot.x == 0 and rot.z == 90:
+			val = 1
+		elif rot.x == 270 and rot.z == 0:
+			val = 2
+		elif rot.x == 0 and rot.z == 180:
+			val = 3
+		elif rot.x == 0 and rot.z == 0:
+			val = 4
+		elif rot.x == 90 and rot.z == 0:
+			val = 5
 		else:
-			emit_signal("rolled_value", 6)
+			val = 6
+		emit_signal("rolled_value", val)
 		visible = false
 
 func _on_roll_dice():
@@ -32,4 +37,4 @@ func _on_roll_dice():
 	translation = s_pos
 	rotation = s_dir
 	visible = true
-	
+	linear_velocity = Vector3.DOWN
