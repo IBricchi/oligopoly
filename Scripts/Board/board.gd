@@ -8,7 +8,7 @@ func _ready():
 	settings = get_tree().get_root().get_node("game")
 	settings.connect("request_board_tiles", self, "_on_request_board_tiles")
 
-	tile_count = get_child_count()
+	tile_count = $tiles.get_child_count()
 
 var request_recieved = false
 func _on_request_board_tiles(tiles):
