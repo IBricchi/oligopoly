@@ -2,6 +2,7 @@ extends KinematicBody
 
 var settings: Node
 var anim: AnimationPlayer
+var body: Spatial
 
 var target_queue: Array;
 
@@ -10,9 +11,10 @@ func _ready():
 	settings.connect("player_step", self, "_on_player_step")
 	
 	anim = $anim
+	body = $body_cont/body
 
-export var gravity: float = 100
-export var speed: float = 10
+export var gravity: float = 5
+export var speed: float = 2.5
 export var min_dist: float = 0.1
 
 var first_frame: bool = true
@@ -34,8 +36,8 @@ func _physics_process(delta):
 		if abs(dir.x) < min_dist and abs(dir.z) < min_dist:
 			velocity.x = 0
 			velocity.z = 0
-			translation.x = target.translation.x
-			translation.z = target.translation.z
+#			translation.x = target.translation.x
+#			translation.z = target.translation.z
 			
 			target_queue.pop_front()
 			
@@ -44,7 +46,7 @@ func _physics_process(delta):
 			dir = dir.normalized()
 			velocity.x = speed * dir.x
 			velocity.z = speed * dir.z
-			look_at(translation + dir, Vector3.UP)
+			body.look_at(translation + dir, Vector3.UP)
 	
 	velocity.y -= gravity * delta
 	velocity = move_and_slide(velocity, Vector3.UP)

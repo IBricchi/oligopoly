@@ -8,7 +8,7 @@
 [sub_resource type="Animation" id=2]
 resource_name = "step"
 tracks/0/type = "value"
-tracks/0/path = NodePath("body/player:rotation_degrees")
+tracks/0/path = NodePath("body_cont/body/player:rotation_degrees")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
@@ -21,16 +21,20 @@ tracks/0/keys = {
 }
 
 [node name="player" type="KinematicBody"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.497, 0, 0 )
 collision_mask = 2
 script = ExtResource( 2 )
 
 [node name="CollisionShape" type="CollisionShape" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.633667, 1, 1.0875 )
 shape = SubResource( 1 )
-
-[node name="body" type="Spatial" parent="."]
-
-[node name="player" parent="body" instance=ExtResource( 3 )]
 
 [node name="anim" type="AnimationPlayer" parent="."]
 anims/step = SubResource( 2 )
+
+[node name="body_cont" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.633667, 0, 1.0875 )
+
+[node name="body" type="Spatial" parent="body_cont"]
+
+[node name="player" parent="body_cont/body" instance=ExtResource( 3 )]
