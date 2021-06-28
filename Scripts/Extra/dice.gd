@@ -6,8 +6,6 @@ signal rolled_value(val)
 
 func _ready():
 	visible = false
-	settings = get_tree().get_root().get_node("game")
-	settings.connect("roll_dice", self, "_on_roll_dice")
 
 func _physics_process(delta):
 	if visible and linear_velocity == Vector3.ZERO:
@@ -31,7 +29,7 @@ func _physics_process(delta):
 		emit_signal("rolled_value", val)
 		visible = false
 
-func _on_roll_dice():
+func roll_dice():
 	var s_pos: Vector3 = Vector3(rand_range(-3,3), 5, rand_range(-3,3))
 	var s_dir: Vector3 = Vector3(rand_range(0,TAU),rand_range(0,TAU),rand_range(0,TAU))
 	translation = s_pos

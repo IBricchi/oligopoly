@@ -1,17 +1,14 @@
 extends KinematicBody
 
-var settings: Node
-var anim: AnimationPlayer
-var body: Spatial
+onready var anim: AnimationPlayer = $anim
+onready var body: Spatial = $body_cont/body
 
-var target_queue: Array;
+var idx: int
+
+var target_queue: Array
 
 func _ready():
-	settings = get_tree().get_root().get_node("game")
-	settings.connect("player_step", self, "_on_player_step")
-	
-	anim = $anim
-	body = $body_cont/body
+	pass	
 
 export var gravity: float = 5
 export var speed: float = 2.5
@@ -19,9 +16,13 @@ export var min_dist: float = 0.1
 
 var first_frame: bool = true
 var velocity: Vector3 = Vector3.ZERO
+var just_frame: bool = false
+
+signal player_landed(idx)
 
 func _physics_process(delta):	
 	if(not target_queue.empty()):
+		just_frame = true
 		if first_frame:
 			first_frame = false
 			anim.stop()
@@ -47,10 +48,15 @@ func _physics_process(delta):
 			velocity.x = speed * dir.x
 			velocity.z = speed * dir.z
 			body.look_at(translation + dir, Vector3.UP)
+	elif just_frame:
+		just_frame = false
+		emit_signal("player_landed", idx)
 	
 	velocity.y -= gravity * delta
 	velocity = move_and_slide(velocity, Vector3.UP)
 	
-func _on_player_step(target: Spatial):
+func queue_target(target: Spatial):
 	target_queue.push_back(target)
-	
+
+func set_idx(in_idx: int):
+	idx = in_idx

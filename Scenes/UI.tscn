@@ -1,0 +1,186 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://Scripts/UI/popup_munu.gd" type="Script" id=1]
+[ext_resource path="res://Assets/UI/left_expand.png" type="Texture" id=2]
+[ext_resource path="res://Assets/UI/right_expand.png" type="Texture" id=3]
+[ext_resource path="res://Assets/UI/roll_button.png" type="Texture" id=4]
+[ext_resource path="res://Assets/UI/new_player_button.png" type="Texture" id=5]
+[ext_resource path="res://Scripts/UI.gd" type="Script" id=6]
+
+[node name="UI" type="MarginContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 25.0
+margin_top = 25.0
+margin_right = -25.0
+margin_bottom = -25.0
+script = ExtResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="roll_cont" type="Control" parent="."]
+margin_right = 1230.0
+margin_bottom = 670.0
+mouse_filter = 2
+
+[node name="roll" type="Button" parent="roll_cont"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -177.0
+margin_top = -91.0
+flat = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="NinePatchRect" type="NinePatchRect" parent="roll_cont/roll"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="areas" type="HBoxContainer" parent="."]
+margin_right = 1230.0
+margin_bottom = 670.0
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="left" type="MarginContainer" parent="areas"]
+margin_right = 407.0
+margin_bottom = 670.0
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="cont" type="Control" parent="areas/left"]
+margin_right = 407.0
+margin_bottom = 670.0
+mouse_filter = 2
+
+[node name="expand" type="Button" parent="areas/left/cont"]
+anchor_top = 0.5
+anchor_bottom = 0.5
+margin_top = -28.5
+margin_right = 78.0
+margin_bottom = 28.5
+icon = ExtResource( 2 )
+flat = true
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="menu" type="PopupPanel" parent="areas/left/cont"]
+anchor_bottom = 1.0
+margin_right = 407.0
+mouse_filter = 2
+size_flags_horizontal = 3
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="areas/left/cont/menu"]
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 403.0
+margin_bottom = 666.0
+
+[node name="HBoxContainer" type="MarginContainer" parent="areas"]
+margin_left = 411.0
+margin_right = 818.0
+margin_bottom = 670.0
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="right" type="MarginContainer" parent="areas"]
+margin_left = 822.0
+margin_right = 1230.0
+margin_bottom = 670.0
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="cont" type="Control" parent="areas/right"]
+margin_right = 408.0
+margin_bottom = 670.0
+mouse_filter = 2
+
+[node name="expand" type="Button" parent="areas/right/cont"]
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_left = -78.0
+margin_top = -28.5
+margin_bottom = 28.5
+icon = ExtResource( 3 )
+flat = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="menu" type="PopupPanel" parent="areas/right/cont"]
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -412.0
+mouse_filter = 2
+size_flags_horizontal = 3
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="list" type="VBoxContainer" parent="areas/right/cont/menu"]
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 408.0
+margin_bottom = 666.0
+mouse_filter = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="num_cont" type="CenterContainer" parent="areas/right/cont/menu/list"]
+margin_right = 404.0
+margin_bottom = 24.0
+mouse_filter = 2
+size_flags_horizontal = 3
+
+[node name="num" type="LineEdit" parent="areas/right/cont/menu/list/num_cont"]
+margin_left = 173.0
+margin_right = 231.0
+margin_bottom = 24.0
+size_flags_horizontal = 2
+size_flags_vertical = 2
+caret_blink = true
+caret_blink_speed = 0.5
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="add_cont" type="CenterContainer" parent="areas/right/cont/menu/list"]
+margin_top = 28.0
+margin_right = 404.0
+margin_bottom = 84.0
+mouse_filter = 2
+size_flags_horizontal = 3
+
+[node name="add" type="Button" parent="areas/right/cont/menu/list/add_cont"]
+margin_left = 151.0
+margin_right = 253.0
+margin_bottom = 56.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+icon = ExtResource( 5 )
+flat = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
