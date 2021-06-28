@@ -24,6 +24,7 @@ var players: Array = []
 func _ready():
 	# setup UI
 	UI.connect("roll", self, "_on_roll_dice")
+	UI.connect("add_player", self, "_on_add_player")
 	
 	# setup board
 	board_tiles = board.request_board_tiles()
@@ -49,6 +50,12 @@ var can_roll: bool = true
 func _on_roll_dice():
 	can_roll = false
 	dice.roll_dice()
+
+func _on_add_player(time: int):
+	if !memory.has(time):
+		print("player has not been in this time period yet")
+	else:
+		print(memory[time])
 
 func _on_rolled_value(val: int):
 	can_roll = true
