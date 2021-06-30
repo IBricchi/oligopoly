@@ -77,6 +77,8 @@ func _on_rolled_value(val: int):
 	while current_tile != target:
 		current_tile = (current_tile + 1) % board_tiles.size()
 		player.queue_target(board_tiles[current_tile])
+		
+	board_tiles[current_tile].player_lands() ## calls node function
 
 func _on_player_landed(idx: int):
 	pass
