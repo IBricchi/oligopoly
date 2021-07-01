@@ -5,73 +5,76 @@
 [ext_resource path="res://Assets/TitleScreen/play.png" type="Texture" id=3]
 [ext_resource path="res://Scripts/title_screen.gd" type="Script" id=4]
 
-[node name="title_screen" type="Control"]
+[node name="title_screen" type="MarginContainer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+margin_left = 15.0
+margin_top = 15.0
+margin_right = -15.0
+margin_bottom = -15.0
+mouse_filter = 2
 script = ExtResource( 4 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="title" type="Control" parent="."]
-anchor_right = 1.0
-margin_bottom = 233.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
+[node name="cont" type="VBoxContainer" parent="."]
+margin_right = 1250.0
+margin_bottom = 690.0
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
-[node name="title" type="Sprite" parent="title"]
+[node name="title" type="CenterContainer" parent="cont"]
+margin_right = 1250.0
+margin_bottom = 343.0
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="title" type="Sprite" parent="cont/title"]
 position = Vector2( 621.103, 143.631 )
 scale = Vector2( 0.562561, 0.562561 )
 texture = ExtResource( 1 )
 
-[node name="menu" type="Control" parent="."]
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_top = -463.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
+[node name="options" type="HBoxContainer" parent="cont"]
+margin_top = 347.0
+margin_right = 1250.0
+margin_bottom = 690.0
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
-[node name="settings" type="Control" parent="menu"]
-anchor_left = 0.5
-anchor_right = 0.5
-anchor_bottom = 1.0
-margin_left = -438.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
+[node name="settings" type="CenterContainer" parent="cont/options"]
+margin_right = 623.0
+margin_bottom = 343.0
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
-[node name="button" type="TextureButton" parent="menu/settings"]
-anchor_left = 1.0
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-margin_left = -406.0
-margin_top = -96.0
-margin_bottom = 96.0
+[node name="button" type="TextureButton" parent="cont/options/settings"]
+margin_left = 108.0
+margin_top = 75.0
+margin_right = 514.0
+margin_bottom = 267.0
 texture_normal = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="play" type="Control" parent="menu"]
-anchor_left = 0.5
-anchor_right = 0.5
-anchor_bottom = 1.0
-margin_right = 638.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
+[node name="play" type="CenterContainer" parent="cont/options"]
+margin_left = 627.0
+margin_right = 1250.0
+margin_bottom = 343.0
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
-[node name="button" type="TextureButton" parent="menu/play"]
-anchor_top = 0.5
-anchor_bottom = 0.5
-margin_left = 73.0
-margin_top = -97.5
-margin_right = 335.0
-margin_bottom = 94.5
+[node name="button" type="TextureButton" parent="cont/options/play"]
+margin_left = 180.0
+margin_top = 75.0
+margin_right = 442.0
+margin_bottom = 267.0
 texture_normal = ExtResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
