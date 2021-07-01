@@ -31,6 +31,7 @@ func _ready():
 	# setup player
 	player = initiate_player(0, global_time)
 	players.push_back(player)
+	add_memory()
 	
 	# setup dice
 	dice.connect("rolled_value", self, "_on_rolled_value")
@@ -53,22 +54,20 @@ func _on_add_player(time: int):
 		players.push_back(player)
 
 func _on_change_time(time: int):
+	global_time = time
+	ui_update_times()
 	for player in players:
 		player.vanish()
+	var time_state = memory.get(time)
+	if time_state != null:
+		for player_data in time_state:
+			var tile = player_data.get("tile")
+			var player = initiate_player(tile, time)
+			players.push_back(player)
+	add_memory()
 
 # Dice connection
 func _on_rolled_value(val: int):	
-	if memory.has(global_time):
-		memory[global_time].push_back({
-			"player_time": player.time,
-			"tile": player.tile
-		})
-	else:
-		memory[global_time] = [{
-			"player_time": player.time,
-			"tile": player.tile
-		}]
-	
 	var next: int = (player.tile + 1)%board_tiles.size()
 	var target: int = (player.tile + val)%board_tiles.size()
 	var path: Array = generate_path(next, target)
@@ -80,13 +79,14 @@ var instructions: Array
 func _on_player_landed(idx: int):
 	if idx == 0: # if main player
 		global_time += 1
-		UI.set_global_time(global_time)
 		player.time += 1
-		UI.set_player_time(player.time)
+		ui_update_times()	
+		
+		add_memory()
+		instructions = generate_instructions()
+		
 		board_tiles[player.tile].player_lands() ## calls node function
 		
-		instructions = generate_instructions()
-	
 	if not instructions.empty():
 		execute_instruction()
 	else:
@@ -98,6 +98,7 @@ func _on_player_vanished(idx: int):
 		remove_child(players[idx])
 	vanished_count += 1
 	if(vanished_count == players.size()):
+		vanished_count = 0
 		players = [player]
 
 # Helpers
@@ -161,3 +162,19 @@ func execute_instruction():
 			player.queue_target(path)
 		_:
 			print("Unkown Command '%s'" % command)
+
+func ui_update_times():
+	UI.set_global_time(global_time)
+	UI.set_player_time(player.time)
+
+func add_memory():
+	if memory.has(global_time):
+		memory[global_time].push_back({
+			"player_time": player.time,
+			"tile": player.tile
+		})
+	else:
+		memory[global_time] = [{
+			"player_time": player.time,
+			"tile": player.tile
+		}]
