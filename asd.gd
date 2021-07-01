@@ -8,7 +8,7 @@ export var tile_type : int = 0
 
 
 var owners: Dictionary = {}
-# dictionry which stores owners and the turn where they initially were bought
+# dictionary which stores owners and the turn where they initially were bought
 
 func _ready():
 	pass
@@ -17,7 +17,7 @@ func _ready():
 func player_lands():
 	if tile_type == 0:
 		if owners.empty():
-			pass # subtract some money from player
+			get_tree().get_root().get_node("game/PropertyPopup").on_landed_on_available_property()
 
 
 func player_passes():
