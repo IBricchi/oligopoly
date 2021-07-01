@@ -21,19 +21,17 @@ tracks/0/keys = {
 }
 
 [node name="player" type="KinematicBody"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.497, 0, 0 )
 collision_mask = 2
 script = ExtResource( 2 )
 
-[node name="CollisionShape" type="CollisionShape" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.633667, 1, 1.0875 )
+[node name="col" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
 shape = SubResource( 1 )
 
 [node name="anim" type="AnimationPlayer" parent="."]
 anims/step = SubResource( 2 )
 
 [node name="body_cont" type="Spatial" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.633667, 0, 1.0875 )
 
 [node name="body" type="Spatial" parent="body_cont"]
 

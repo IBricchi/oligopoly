@@ -64,14 +64,16 @@ margin_bottom = 663.0
 
 [node name="num_cont" type="CenterContainer" parent="areas/left/menu/list"]
 margin_right = 393.0
-margin_bottom = 24.0
+margin_bottom = 78.0
 mouse_filter = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="num" type="LineEdit" parent="areas/left/menu/list/num_cont"]
 margin_left = 167.0
+margin_top = 27.0
 margin_right = 225.0
-margin_bottom = 24.0
+margin_bottom = 51.0
 size_flags_horizontal = 2
 size_flags_vertical = 2
 caret_blink = true
@@ -81,16 +83,18 @@ __meta__ = {
 }
 
 [node name="add_cont" type="CenterContainer" parent="areas/left/menu/list"]
-margin_top = 28.0
+margin_top = 82.0
 margin_right = 393.0
-margin_bottom = 84.0
+margin_bottom = 161.0
 mouse_filter = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="add" type="Button" parent="areas/left/menu/list/add_cont"]
 margin_left = 145.0
+margin_top = 11.0
 margin_right = 247.0
-margin_bottom = 56.0
+margin_bottom = 67.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 icon = ExtResource( 5 )
@@ -100,42 +104,42 @@ __meta__ = {
 }
 
 [node name="0" type="Control" parent="areas/left/menu/list"]
-margin_top = 88.0
+margin_top = 165.0
 margin_right = 393.0
-margin_bottom = 179.0
+margin_bottom = 243.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="1" type="Control" parent="areas/left/menu/list"]
-margin_top = 183.0
+margin_top = 247.0
 margin_right = 393.0
-margin_bottom = 274.0
+margin_bottom = 326.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="2" type="Control" parent="areas/left/menu/list"]
-margin_top = 278.0
+margin_top = 330.0
 margin_right = 393.0
-margin_bottom = 370.0
+margin_bottom = 408.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="3" type="Control" parent="areas/left/menu/list"]
-margin_top = 374.0
+margin_top = 412.0
 margin_right = 393.0
-margin_bottom = 465.0
+margin_bottom = 491.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="4" type="Control" parent="areas/left/menu/list"]
-margin_top = 469.0
+margin_top = 495.0
 margin_right = 393.0
-margin_bottom = 560.0
+margin_bottom = 573.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="5" type="Control" parent="areas/left/menu/list"]
-margin_top = 564.0
+margin_top = 577.0
 margin_right = 393.0
 margin_bottom = 656.0
 size_flags_horizontal = 3
@@ -223,9 +227,9 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-margin_left = -94.0
+margin_left = -82.0
 margin_top = -41.5
-margin_right = 94.0
+margin_right = 82.0
 margin_bottom = 42.5
 size_flags_horizontal = 3
 size_flags_vertical = 3
