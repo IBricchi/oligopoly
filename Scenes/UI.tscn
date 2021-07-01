@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://Scripts/UI/popup_munu.gd" type="Script" id=1]
 [ext_resource path="res://Assets/UI/left_expand.png" type="Texture" id=2]
+[ext_resource path="res://Assets/Fonts/Krona_One/Krona_One.tres" type="DynamicFont" id=3]
 [ext_resource path="res://Assets/UI/roll_button.png" type="Texture" id=4]
 [ext_resource path="res://Assets/UI/new_player_button.png" type="Texture" id=5]
 [ext_resource path="res://Scripts/UI.gd" type="Script" id=6]
@@ -167,11 +168,44 @@ margin_bottom = 670.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="0" type="Control" parent="areas/right/list"]
+[node name="time" type="HBoxContainer" parent="areas/right/list"]
 margin_right = 408.0
 margin_bottom = 80.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+
+[node name="CenterContainer3" type="CenterContainer" parent="areas/right/list/time"]
+margin_right = 133.0
+margin_bottom = 80.0
+size_flags_horizontal = 3
+
+[node name="global" type="CenterContainer" parent="areas/right/list/time"]
+margin_left = 137.0
+margin_right = 270.0
+margin_bottom = 80.0
+size_flags_horizontal = 3
+
+[node name="val" type="Label" parent="areas/right/list/time/global"]
+margin_left = 13.0
+margin_top = 28.0
+margin_right = 120.0
+margin_bottom = 52.0
+custom_fonts/font = ExtResource( 3 )
+text = "Global: 1"
+
+[node name="player" type="CenterContainer" parent="areas/right/list/time"]
+margin_left = 274.0
+margin_right = 408.0
+margin_bottom = 80.0
+size_flags_horizontal = 3
+
+[node name="val" type="Label" parent="areas/right/list/time/player"]
+margin_left = 13.0
+margin_top = 28.0
+margin_right = 120.0
+margin_bottom = 52.0
+custom_fonts/font = ExtResource( 3 )
+text = "Player: 1"
 
 [node name="1" type="Control" parent="areas/right/list"]
 margin_top = 84.0

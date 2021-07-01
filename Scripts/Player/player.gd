@@ -4,6 +4,8 @@ onready var anim: AnimationPlayer = $anim
 onready var body: Spatial = $body_cont/body
 
 var idx: int
+var time: int
+var tile: int
 
 var target_queue: Array
 
@@ -59,6 +61,3 @@ func _physics_process(delta):
 	
 func queue_target(target: Array):
 	target_queue.push_back(target)
-
-func set_idx(in_idx: int):
-	idx = in_idx

@@ -5,7 +5,6 @@ onready var UI: MarginContainer = $UI
 
 # board data
 onready var board: Spatial = $board
-var current_tile: int
 var board_tiles: Array
 
 # player data
@@ -17,8 +16,7 @@ onready var dice: RigidBody = $dice
 
 # memory data
 var memory: Dictionary = {}
-var global_time: int = 0
-var player_time: int = 0
+var global_time: int = 1
 var players: Array = []
 
 func _ready():
@@ -30,8 +28,8 @@ func _ready():
 	board_tiles = board.request_board_tiles()
 	
 	# setup player
-	player = initiate_player(board_tiles.front().translation)
-	player.connect("player_landed", self, "_on_player_landed")
+	player = initiate_player(0, global_time)
+	players.push_back(player)
 	
 	# setup dice
 	dice.connect("rolled_value", self, "_on_rolled_value")
@@ -48,39 +46,48 @@ func _on_add_player(time: int):
 	else:
 		print(memory[time])
 		var player_data = memory[time][0]
-		var pos = player_data.position
-		var player = initiate_player(board_tiles[pos].translation)
+		var tile = player_data.get("tile")
+		var player = initiate_player(tile, time)
+		players.push_back(player)
 
 func _on_rolled_value(val: int):	
 	if memory.has(global_time):
 		memory[global_time].push_back({
-			"player_time": player_time,
-			"position": current_tile
+			"player_time": player.time,
+			"tile": player.tile
 		})
 	else:
 		memory[global_time] = [{
-			"player_time": player_time,
-			"position": current_tile
+			"player_time": player.time,
+			"tile": player.tile
 		}]
 	
-	var target: int = (current_tile + val)%board_tiles.size()
-	var path: Array = [board_tiles[current_tile]]
-	while current_tile != target:
-		current_tile = (current_tile + 1) % board_tiles.size()
-		path.append(board_tiles[current_tile])
+	var next: int = (player.tile + 1)%board_tiles.size()
+	var target: int = (player.tile + val)%board_tiles.size()
+	var path: Array = generate_path(next, target)
+	player.tile = target
 	player.queue_target(path)
 
+var instructions: Array
 func _on_player_landed(idx: int):
 	if idx == 0: # if main player
-		can_roll = true
-		player_time += 1
 		global_time += 1
-		board_tiles[current_tile].player_lands() ## calls node function
+		UI.set_global_time(global_time)
+		player.time += 1
+		UI.set_player_time(player.time)
+		board_tiles[player.tile].player_lands() ## calls node function
+		
+		instructions = generate_instructions()
+	
+	if not instructions.empty():
+		execute_instruction()
 	else:
-		simulate_player(idx + 1)
+		can_roll = true		
 
-func initiate_player(initial_position: Vector3) -> KinematicBody:
+func initiate_player(tile_idx: int, time: int) -> KinematicBody:
 	var player: KinematicBody = player_scene.instance()
+	var initial_tile: Spatial  = board_tiles[tile_idx]
+	var initial_position: Vector3 = initial_tile.translation
 	
 	player.translation = initial_position + Vector3.UP * 3
 	player.scale *= 0.4
@@ -89,10 +96,50 @@ func initiate_player(initial_position: Vector3) -> KinematicBody:
 	player.get_node("col").translation += rand_offset
 	player.get_node("body_cont").translation += rand_offset
 	
-	player.set_idx(players.size())
+	player.idx = players.size()
+	player.tile = tile_idx
+	player.time = time
+	
+	player.connect("player_landed", self, "_on_player_landed")
 	add_child(player)
+	
 	return player
 
-func simulate_player(idx: int) -> void:
-	var player: KinematicBody = players[idx]
-	var player_time: int = player.get_time()
+# there is currently no checks for infinite looping
+func generate_path(s_idx: int, e_idx: int) -> Array:
+	var idx: int = s_idx
+	var path: Array = [board_tiles[idx]]
+	while idx != e_idx:
+		idx = (idx + 1) % board_tiles.size()
+		path.push_back(board_tiles[idx])
+	return path
+
+func generate_instructions() -> Array:
+	var instructions: Array = []
+	
+	for player in players:
+		if player.idx != 0:
+			var data: Dictionary = memory.get(player.time + 1)[0]
+			instructions.append({
+				"player": player,
+				"command": "move",
+				"data": data
+			})
+	
+	return instructions
+
+func execute_instruction():
+	var instruction: Dictionary = instructions.pop_front()
+	var player = instruction.get("player")
+	var command = instruction.get("command")
+	var data = instruction.get("data")
+	match command:
+		"move":
+			var next: int = (player.tile + 1)%board_tiles.size()
+			var target: int = data.get("tile")
+			var path: Array = generate_path(next, target)
+			player.tile = target
+			player.time += 1
+			player.queue_target(path)
+		_:
+			print("Unkown Command '%s'" % command)
