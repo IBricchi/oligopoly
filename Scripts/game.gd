@@ -23,6 +23,7 @@ func _ready():
 	# setup UI
 	UI.connect("roll", self, "_on_roll_dice")
 	UI.connect("add_player", self, "_on_add_player")
+	UI.connect("change_time", self, "_on_change_time")
 	
 	# setup board
 	board_tiles = board.request_board_tiles()
@@ -34,6 +35,7 @@ func _ready():
 	# setup dice
 	dice.connect("rolled_value", self, "_on_rolled_value")
 
+# UI connections
 var can_roll: bool = true
 func _on_roll_dice():
 	if can_roll:
@@ -50,6 +52,11 @@ func _on_add_player(time: int):
 		var player = initiate_player(tile, time)
 		players.push_back(player)
 
+func _on_change_time(time: int):
+	for player in players:
+		player.vanish()
+
+# Dice connection
 func _on_rolled_value(val: int):	
 	if memory.has(global_time):
 		memory[global_time].push_back({
@@ -68,6 +75,7 @@ func _on_rolled_value(val: int):
 	player.tile = target
 	player.queue_target(path)
 
+# Player connections
 var instructions: Array
 func _on_player_landed(idx: int):
 	if idx == 0: # if main player
@@ -84,6 +92,15 @@ func _on_player_landed(idx: int):
 	else:
 		can_roll = true		
 
+var vanished_count = 0
+func _on_player_vanished(idx: int):
+	if idx != 0:
+		remove_child(players[idx])
+	vanished_count += 1
+	if(vanished_count == players.size()):
+		players = [player]
+
+# Helpers
 func initiate_player(tile_idx: int, time: int) -> KinematicBody:
 	var player: KinematicBody = player_scene.instance()
 	var initial_tile: Spatial  = board_tiles[tile_idx]
@@ -101,6 +118,7 @@ func initiate_player(tile_idx: int, time: int) -> KinematicBody:
 	player.time = time
 	
 	player.connect("player_landed", self, "_on_player_landed")
+	player.connect("player_vanished", self, "_on_player_vanished")
 	add_child(player)
 	
 	return player

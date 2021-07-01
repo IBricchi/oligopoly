@@ -21,6 +21,7 @@ var velocity: Vector3 = Vector3.ZERO
 var just_frame: bool = false
 
 signal player_landed(idx)
+signal player_vanished(idx)
 
 func _physics_process(delta):	
 	if not target_queue.empty():
@@ -61,3 +62,6 @@ func _physics_process(delta):
 	
 func queue_target(target: Array):
 	target_queue.push_back(target)
+
+func vanish():
+	emit_signal("player_vanished", idx)
