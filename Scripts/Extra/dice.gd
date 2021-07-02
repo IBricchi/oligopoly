@@ -35,4 +35,6 @@ func roll_dice():
 	translation = s_pos
 	rotation = s_dir
 	visible = true
-	linear_velocity = Vector3.DOWN
+	linear_velocity =  Vector3(rand_range(-0.25,0.25),-1,rand_range(-0.25,0.25))
+	angular_velocity = Vector3(rand_range(-15,15),rand_range(-8,8),rand_range(-15,15))
+	
