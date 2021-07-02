@@ -29,7 +29,7 @@ func _ready():
 	board_tiles = board.request_board_tiles()
 	
 	# setup player
-	player = initiate_player(0, global_time)
+	player = initiate_player(0, global_time, 0)
 	players.push_back(player)
 	add_memory()
 	
@@ -50,7 +50,7 @@ func _on_add_player(time: int):
 		print(memory[time])
 		var player_data = memory[time][0]
 		var tile = player_data.get("tile")
-		var player = initiate_player(tile, time)
+		var player = initiate_player(tile, time, 0)
 		players.push_back(player)
 
 func _on_change_time(time: int):
@@ -62,8 +62,10 @@ func _on_change_time(time: int):
 	if time_state != null:
 		for player_data in time_state:
 			var tile = player_data.get("tile")
-			var player = initiate_player(tile, time)
+			var player = initiate_player(tile, time, player_data.get("continuity"))
 			players.push_back(player)
+	
+	player.continuity += 1
 	add_memory()
 
 # Dice connection
@@ -76,8 +78,12 @@ func _on_rolled_value(val: int):
 
 # Player connections
 var instructions: Array
+
+func _on_player_first_land(idx: int):
+	check_instructions()
+
 func _on_player_landed(idx: int):
-	if idx == 0: # if main player
+	if idx == 0:
 		global_time += 1
 		player.time += 1
 		ui_update_times()	
@@ -87,10 +93,7 @@ func _on_player_landed(idx: int):
 		
 		board_tiles[player.tile].player_lands() ## calls node function
 		
-	if not instructions.empty():
-		execute_instruction()
-	else:
-		can_roll = true		
+	check_instructions()
 
 var vanished_count = 0
 func _on_player_vanished(idx: int):
@@ -100,9 +103,10 @@ func _on_player_vanished(idx: int):
 	if(vanished_count == players.size()):
 		vanished_count = 0
 		players = [player]
+	check_instructions()
 
 # Helpers
-func initiate_player(tile_idx: int, time: int) -> KinematicBody:
+func initiate_player(tile_idx: int, time: int, continuity: int) -> KinematicBody:
 	var player: KinematicBody = player_scene.instance()
 	var initial_tile: Spatial  = board_tiles[tile_idx]
 	var initial_position: Vector3 = initial_tile.translation
@@ -117,7 +121,9 @@ func initiate_player(tile_idx: int, time: int) -> KinematicBody:
 	player.idx = players.size()
 	player.tile = tile_idx
 	player.time = time
+	player.continuity = continuity
 	
+	player.connect("player_first_land", self, "_on_player_first_land")
 	player.connect("player_landed", self, "_on_player_landed")
 	player.connect("player_vanished", self, "_on_player_vanished")
 	add_child(player)
@@ -136,13 +142,59 @@ func generate_path(s_idx: int, e_idx: int) -> Array:
 func generate_instructions() -> Array:
 	var instructions: Array = []
 	
+	# get continuity data for last, current, and next times
+	var prev_state = memory.get(global_time-1)
+	var prev_continuities: Dictionary = {}
+	if prev_state != null:
+		for player_data in prev_state:
+			prev_continuities[player_data.get("continuity")] = player_data
+	
+	var time_state = memory.get(global_time)
+	var time_continuities: Dictionary = {}
+	if time_state != null:
+		for player_data in time_state:
+			time_continuities[player_data.get("continuity")] = player_data
+			
+	var next_state = memory.get(global_time + 1)
+	var next_continuities: Dictionary = {}
+	if next_state != null:
+		for player_data in next_state:
+			next_continuities[player_data.get("continuity")] = player_data
+	
+	# add new players
+	for continuity in time_continuities.keys():
+		if not prev_continuities.has(continuity) and time_continuities.get(continuity).get("player_time") != player.time:
+			instructions.append({
+				"player": null,
+				"command": "add",
+				"data": time_continuities.get(continuity)
+			})
+	
+	# move players
 	for player in players:
 		if player.idx != 0:
-			var data: Dictionary = memory.get(player.time + 1)[0]
+			var data: Dictionary = {}
+			for player_data in time_state:
+				if player.continuity == player_data.get("continuity"):
+					data = player_data
 			instructions.append({
 				"player": player,
-				"command": "move",
+				"command": "mov",
 				"data": data
+			})
+	
+	# remove players
+	for continuity in time_continuities.keys():
+		if not next_continuities.has(continuity) and time_continuities.get(continuity).get("player_time") != player.time:
+			var player: KinematicBody
+			for test_player in players:
+				if test_player.continuity == continuity:
+					player = test_player
+					break
+			instructions.append({
+				"player": player,
+				"command": "rem",
+				"data": time_continuities.get(continuity)
 			})
 	
 	return instructions
@@ -153,28 +205,47 @@ func execute_instruction():
 	var command = instruction.get("command")
 	var data = instruction.get("data")
 	match command:
-		"move":
+		"add":
+			player = initiate_player(data.get("tile"), global_time, data.get("continuity"))
+			players.push_back(player)
+		"mov":
 			var next: int = (player.tile + 1)%board_tiles.size()
 			var target: int = data.get("tile")
 			var path: Array = generate_path(next, target)
 			player.tile = target
 			player.time += 1
 			player.queue_target(path)
+		"rem":
+			remove_player(player.idx)
+			remove_child(player)
 		_:
 			print("Unkown Command '%s'" % command)
+
+func check_instructions():
+	if not instructions.empty():
+		execute_instruction()
+	else:
+		can_roll = true
 
 func ui_update_times():
 	UI.set_global_time(global_time)
 	UI.set_player_time(player.time)
 
 func add_memory():
+	var new_mem: Dictionary = {
+		"player_time": player.time,
+		"tile": player.tile,
+		"continuity": player.continuity
+	}
+	
 	if memory.has(global_time):
-		memory[global_time].push_back({
-			"player_time": player.time,
-			"tile": player.tile
-		})
+		memory[global_time].push_back(new_mem)
 	else:
-		memory[global_time] = [{
-			"player_time": player.time,
-			"tile": player.tile
-		}]
+		memory[global_time] = [new_mem]
+
+func remove_player(idx: int):
+	players[idx].vanish()
+	vanished_count = 0
+	for i in range(idx+1, players.size()):
+		players[i].idx -= 1
+	players.remove(idx)
