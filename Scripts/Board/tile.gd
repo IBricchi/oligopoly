@@ -32,16 +32,26 @@ func _ready():
 	$"body/model".get_child(tile_type).visible = true
 
 signal queue_property_prompt(idx)
+signal queue_time_travel
+signal add_money(idx, ammount)
+
 func player_lands(player_idx: int):
 	match tile_type:
 		tt.property:
 			if owners.empty():
 				if player_idx == 0: # if main player
 					emit_signal("queue_property_prompt", idx)
-		_:
-			print("Land: Unimplemented tile type")
+		tt.chance:
+			print("chance not yet implemented")
+		tt.time_warp:
+			if player_idx == 0:
+				emit_signal("queue_time_travel")
+		tt.start:
+			emit_signal("add_money", player_idx, 200)
 
 func player_passes(player_idx: int):
 	match tile_type:
+		tt.start:
+			emit_signal("add_money", player_idx, 200)
 		_:
-			print("Pass: Unimplemented tile type")
+			pass # only matters for start

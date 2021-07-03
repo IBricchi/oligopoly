@@ -33,6 +33,7 @@ func _ready():
 	board_tiles = board.request_board_tiles()
 	for tile in board_tiles:
 		tile.connect("queue_property_prompt", self, "_on_queue_property_prompt")
+		tile.connect("queue_time_travel", self, "_on_queue_time_travel")
 	
 	# setup player
 	player = initiate_player(0, global_time, 0)
@@ -53,35 +54,36 @@ func _on_ti_handled():
 	handle_turn_instruction()
 
 func _on_add_player(time: int):
-	if !memory.has(time):
-		print("player has not been in this time period yet")
-	else:
-		print(memory[time])
-		var player_data = memory[time][0]
-		var tile = player_data.get("tile")
-		var player = initiate_player(tile, time, 0)
-		players.push_back(player)
+	_on_rolled_value(time)
+#	if !memory.has(time):
+#		print("player has not been in this time period yet")
+#	else:
+#		print(memory[time])
+#		var player_data = memory[time][0]
+#		var tile = player_data.get("tile")
+#		var player = initiate_player(tile, time, 0)
+#		players.push_back(player)
 
 func _on_change_time(time: int):
+	add_memory()
+	
 	global_time = time
 	ui_update_times()
 	for player in players:
 		player.vanish()
-	var time_state = memory.get(time)
-	if time_state != null:
-		for player_data in time_state:
-			var tile = player_data.get("tile")
-			var player = initiate_player(tile, time, player_data.get("continuity"))
-			players.push_back(player)
-	
+		
 	player.continuity += 1
-	add_memory()
 
 # Board connections
 func _on_queue_property_prompt(tile_idx: int):
 	turn_queue.push_back({
 		"command": "property_prompt",
 		"tile": tile_idx
+	})
+
+func _on_queue_time_travel():
+	turn_queue.push_back({
+		"command": "time_travel"
 	})
 
 # Dice connection
@@ -105,9 +107,6 @@ func _on_player_landed(idx: int):
 		ui_update_times()	
 		
 		handle_turn_instruction()
-		
-		add_memory()
-		instructions = generate_instructions()
 	else:
 		check_instructions()
 
@@ -157,27 +156,30 @@ func generate_path(s_idx: int, e_idx: int) -> Array:
 
 func handle_turn_instruction():
 	if turn_queue.empty():
+		generate_instructions()
 		check_instructions()
+		add_memory()
 	else:
 		var instruction: Dictionary = turn_queue.pop_front()
 		var command: String = instruction.get("command")
 		match command:
 			"property_prompt":
 				var tile: int = instruction.get("tile")
-				UI.show_property_popup(tile)
+				handle_turn_instruction()
+#				UI.show_property_popup(tile)
+			"time_travel":
+#				_on_change_time(global_time + (round(randf())*2-1) * round(rand_range(5,20)))
+				_on_change_time(global_time - round(rand_range(5,20)))
+				handle_turn_instruction()
 			_:
 				print("Unkown Command '%s'" % command)
 
-func generate_instructions() -> Array:
-	var instructions: Array = []
-	
-	# get continuity data for last, current, and next times
-	var prev_state = memory.get(global_time-1)
-	var prev_continuities: Dictionary = {}
-	if prev_state != null:
-		for player_data in prev_state:
-			prev_continuities[player_data.get("continuity")] = player_data
-	
+func generate_instructions():
+	# get existing continuities
+	var prev_continuity: Array
+	for player in players:
+		prev_continuity.push_back(player.continuity)
+		
 	var time_state = memory.get(global_time)
 	var time_continuities: Dictionary = {}
 	if time_state != null:
@@ -192,9 +194,8 @@ func generate_instructions() -> Array:
 	
 	# add new players
 	for continuity in time_continuities.keys():
-		if not prev_continuities.has(continuity) and time_continuities.get(continuity).get("player_time") != player.time:
+		if not prev_continuity.has(continuity):
 			instructions.append({
-				"player": null,
 				"command": "add",
 				"data": time_continuities.get(continuity)
 			})
@@ -211,22 +212,11 @@ func generate_instructions() -> Array:
 				"command": "mov",
 				"data": data
 			})
-	
-	# remove players
-	for continuity in time_continuities.keys():
-		if not next_continuities.has(continuity) and time_continuities.get(continuity).get("player_time") != player.time:
-			var player: KinematicBody
-			for test_player in players:
-				if test_player.continuity == continuity:
-					player = test_player
-					break
-			instructions.append({
-				"player": player,
-				"command": "rem",
-				"data": time_continuities.get(continuity)
-			})
-	
-	return instructions
+			if not next_continuities.has(player.continuity):
+				instructions.append({
+					"player": player,
+					"command": "rem"
+				})
 
 func execute_instruction():
 	var instruction: Dictionary = instructions.pop_front()
