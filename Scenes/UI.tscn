@@ -1,11 +1,12 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
-[ext_resource path="res://Scripts/UI/popup_munu.gd" type="Script" id=1]
+[ext_resource path="res://Scripts/UI/hide_on_click_out.gd" type="Script" id=1]
 [ext_resource path="res://Assets/UI/left_expand.png" type="Texture" id=2]
 [ext_resource path="res://Assets/Fonts/Krona_One/Krona_One.tres" type="DynamicFont" id=3]
 [ext_resource path="res://Assets/UI/roll_button.png" type="Texture" id=4]
 [ext_resource path="res://Assets/UI/new_player_button.png" type="Texture" id=5]
 [ext_resource path="res://Scripts/UI.gd" type="Script" id=6]
+[ext_resource path="res://Scripts/UI/show_menu.gd" type="Script" id=7]
 
 [node name="UI" type="MarginContainer"]
 anchor_right = 1.0
@@ -46,6 +47,7 @@ margin_right = 78.0
 margin_bottom = 28.5
 icon = ExtResource( 2 )
 flat = true
+script = ExtResource( 7 )
 __meta__ = {
 "_edit_use_anchors_": true
 }
@@ -326,6 +328,122 @@ anchor_bottom = 1.0
 margin_top = -1.25989
 margin_bottom = -1.25989
 texture = ExtResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="property_popup" type="MarginContainer" parent="."]
+margin_right = 1230.0
+margin_bottom = 670.0
+mouse_filter = 2
+size_flags_vertical = 3
+custom_constants/margin_right = 350
+custom_constants/margin_top = 150
+custom_constants/margin_left = 350
+custom_constants/margin_bottom = 150
+
+[node name="body" type="PanelContainer" parent="property_popup"]
+visible = false
+margin_left = 350.0
+margin_top = 150.0
+margin_right = 880.0
+margin_bottom = 520.0
+script = ExtResource( 1 )
+
+[node name="split" type="VSplitContainer" parent="property_popup/body"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 523.0
+margin_bottom = 363.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+split_offset = 112
+
+[node name="data" type="CenterContainer" parent="property_popup/body/split"]
+margin_right = 516.0
+margin_bottom = 284.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="prompt" type="Label" parent="property_popup/body/split/data"]
+margin_left = 88.0
+margin_top = 135.0
+margin_right = 428.0
+margin_bottom = 149.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "You can buy this property ! My aren't you a lucky one."
+
+[node name="options" type="HBoxContainer" parent="property_popup/body/split"]
+margin_top = 296.0
+margin_right = 516.0
+margin_bottom = 356.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="property_popup/body/split/options"]
+margin_right = 256.0
+margin_bottom = 60.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/margin_right = 60
+custom_constants/margin_top = 10
+custom_constants/margin_left = 60
+custom_constants/margin_bottom = 10
+
+[node name="no" type="Button" parent="property_popup/body/split/options/MarginContainer"]
+margin_left = 60.0
+margin_top = 10.0
+margin_right = 196.0
+margin_bottom = 50.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="property_popup/body/split/options/MarginContainer/no"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -62.0
+margin_top = -7.0
+margin_right = 62.0
+margin_bottom = 7.0
+text = "Hell yeah I'll buy it."
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MarginContainer2" type="MarginContainer" parent="property_popup/body/split/options"]
+margin_left = 260.0
+margin_right = 516.0
+margin_bottom = 60.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/margin_right = 60
+custom_constants/margin_top = 10
+custom_constants/margin_left = 60
+custom_constants/margin_bottom = 10
+
+[node name="yes" type="Button" parent="property_popup/body/split/options/MarginContainer2"]
+margin_left = 60.0
+margin_top = 10.0
+margin_right = 196.0
+margin_bottom = 50.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="property_popup/body/split/options/MarginContainer2/yes"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -26.5
+margin_top = -7.0
+margin_right = 26.5
+margin_bottom = 7.0
+text = "Fuck no."
 __meta__ = {
 "_edit_use_anchors_": false
 }

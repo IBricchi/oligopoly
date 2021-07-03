@@ -43,3 +43,8 @@ func set_global_time(time: int):
 onready var player_time: Label = $"areas/right/list/time/player/val"
 func set_player_time(time: int):
 	player_time.text = "Player: %d" % time
+	
+onready var property_popup: PanelContainer = $"property_popup/body"
+func show_property_popup():
+	property_popup.visible = true
+

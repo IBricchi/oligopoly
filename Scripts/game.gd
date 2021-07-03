@@ -27,6 +27,8 @@ func _ready():
 	
 	# setup board
 	board_tiles = board.request_board_tiles()
+	for tile in board_tiles:
+		tile.connect("buy_property_popup", self, "_on_buy_property_popup")
 	
 	# setup player
 	player = initiate_player(0, global_time, 0)
@@ -68,6 +70,10 @@ func _on_change_time(time: int):
 	player.continuity += 1
 	add_memory()
 
+# Board connections
+func _on_buy_property_popup(tile_idx: int):
+	UI.show_property_popup()
+
 # Dice connection
 func _on_rolled_value(val: int):	
 	var next: int = (player.tile + 1)%board_tiles.size()
@@ -91,7 +97,7 @@ func _on_player_landed(idx: int):
 		add_memory()
 		instructions = generate_instructions()
 		
-		board_tiles[player.tile].player_lands() ## calls node function
+	board_tiles[player.tile].player_lands(idx) ## calls node function
 		
 	check_instructions()
 

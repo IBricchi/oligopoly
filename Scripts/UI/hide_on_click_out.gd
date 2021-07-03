@@ -1,12 +1,4 @@
-extends Container
-
-onready var toggle: Button = $"../cont/expand"
-
-func _ready():
-	toggle.connect("button_down", self, "_on_button_down")
-
-func _on_button_down():
-	visible = true
+extends Control
 
 func _input(event: InputEvent):
 	if (event is InputEventMouseButton) and event.pressed:
