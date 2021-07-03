@@ -2,12 +2,12 @@
 
 importer="scene"
 type="PackedScene"
-path="res://.import/default.glb-f3bebf3954696428dafd793c1dbe9072.scn"
+path="res://.import/property.glb-185ab474c5ab779302cebfd993bcb39d.scn"
 
 [deps]
 
-source_file="res://Assets/Board/Tiles/Default/default.glb"
-dest_files=[ "res://.import/default.glb-f3bebf3954696428dafd793c1dbe9072.scn" ]
+source_file="res://Assets/Board/Tiles/IB_Property/property.glb"
+dest_files=[ "res://.import/property.glb-185ab474c5ab779302cebfd993bcb39d.scn" ]
 
 [params]
 

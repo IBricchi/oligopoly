@@ -334,6 +334,7 @@ __meta__ = {
 }
 
 [node name="property_popup" type="MarginContainer" parent="."]
+visible = false
 margin_right = 1230.0
 margin_bottom = 670.0
 size_flags_vertical = 3
