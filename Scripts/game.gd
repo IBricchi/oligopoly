@@ -97,8 +97,6 @@ func _on_player_landed(idx: int):
 		add_memory()
 		instructions = generate_instructions()
 		
-	board_tiles[player.tile].player_lands(idx) ## calls node function
-		
 	check_instructions()
 
 var vanished_count = 0
