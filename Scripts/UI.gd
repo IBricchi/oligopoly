@@ -1,18 +1,23 @@
 extends MarginContainer
 
 signal roll
+signal ti_handled
+signal buy_property(idx)
 signal add_player(time)
 signal change_time(time)
 
 onready var roll: Button = $"areas/right/list/roll_cont/roll"
 onready var add_player: Button = $"areas/left/menu/list/add_player/add_cont/add"
 onready var change_time: Button = $"areas/left/menu/list/change_time/change_cont/change"
+onready var property_popup: Container = $"property_popup"
 
 func _ready():
 	roll.connect("button_up", self, "_on_roll")
 	
 	add_player.connect("button_up", self, "_on_add_player")
 	change_time.connect("button_up", self, "_on_change_time")
+	
+	property_popup.connect("buy_property", self, "_on_buy_property")
 
 func _on_roll():
 	emit_signal("roll")
@@ -35,6 +40,10 @@ func _on_change_time():
 	else:
 		print("Invalid time for changing time!")
 
+func _on_buy_property(tile_idx: int, do: bool):
+	if do:
+		emit_signal("buy_property", tile_idx)
+	emit_signal("ti_handled")
 
 onready var global_time: Label = $"areas/right/list/time/global/val"
 func set_global_time(time: int):
@@ -43,3 +52,7 @@ func set_global_time(time: int):
 onready var player_time: Label = $"areas/right/list/time/player/val"
 func set_player_time(time: int):
 	player_time.text = "Player: %d" % time
+	
+func show_property_popup(tile_idx: int):
+	property_popup.popup(tile_idx)
+

@@ -19,14 +19,20 @@ var memory: Dictionary = {}
 var global_time: int = 1
 var players: Array = []
 
+# turn data
+var turn_queue: Array = []
+
 func _ready():
 	# setup UI
 	UI.connect("roll", self, "_on_roll_dice")
+	UI.connect("ti_handled", self, "_on_ti_handled")
 	UI.connect("add_player", self, "_on_add_player")
 	UI.connect("change_time", self, "_on_change_time")
 	
 	# setup board
 	board_tiles = board.request_board_tiles()
+	for tile in board_tiles:
+		tile.connect("queue_property_prompt", self, "_on_queue_property_prompt")
 	
 	# setup player
 	player = initiate_player(0, global_time, 0)
@@ -42,6 +48,9 @@ func _on_roll_dice():
 	if can_roll:
 		can_roll = false
 		dice.roll_dice()
+
+func _on_ti_handled():
+	handle_turn_instruction()
 
 func _on_add_player(time: int):
 	if !memory.has(time):
@@ -68,6 +77,13 @@ func _on_change_time(time: int):
 	player.continuity += 1
 	add_memory()
 
+# Board connections
+func _on_queue_property_prompt(tile_idx: int):
+	turn_queue.push_back({
+		"command": "property_prompt",
+		"tile": tile_idx
+	})
+
 # Dice connection
 func _on_rolled_value(val: int):	
 	var next: int = (player.tile + 1)%board_tiles.size()
@@ -88,12 +104,12 @@ func _on_player_landed(idx: int):
 		player.time += 1
 		ui_update_times()	
 		
+		handle_turn_instruction()
+		
 		add_memory()
 		instructions = generate_instructions()
-		
-		board_tiles[player.tile].player_lands() ## calls node function
-		
-	check_instructions()
+	else:
+		check_instructions()
 
 var vanished_count = 0
 func _on_player_vanished(idx: int):
@@ -138,6 +154,19 @@ func generate_path(s_idx: int, e_idx: int) -> Array:
 		idx = (idx + 1) % board_tiles.size()
 		path.push_back(board_tiles[idx])
 	return path
+
+func handle_turn_instruction():
+	if turn_queue.empty():
+		check_instructions()
+	else:
+		var instruction: Dictionary = turn_queue.pop_front()
+		var command: String = instruction.get("command")
+		match command:
+			"property_prompt":
+				var tile: int = instruction.get("tile")
+				UI.show_property_popup(tile)
+			_:
+				print("Unkown Command '%s'" % command)
 
 func generate_instructions() -> Array:
 	var instructions: Array = []

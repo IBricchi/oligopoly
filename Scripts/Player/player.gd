@@ -49,6 +49,11 @@ func _physics_process(delta):
 				
 				target_queue.front().pop_front()
 				
+				if target_queue.front().empty():
+					target.player_lands(idx)
+				else:
+					target.player_passes(idx)
+				
 				first_frame = true
 			else:
 				dir = dir.normalized()
