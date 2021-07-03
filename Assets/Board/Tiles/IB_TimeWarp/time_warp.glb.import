@@ -2,12 +2,12 @@
 
 importer="scene"
 type="PackedScene"
-path="res://.import/default.glb-f3bebf3954696428dafd793c1dbe9072.scn"
+path="res://.import/time_warp.glb-fc3588e239e0699f8239594a0db30974.scn"
 
 [deps]
 
-source_file="res://Assets/Board/Tiles/Default/default.glb"
-dest_files=[ "res://.import/default.glb-f3bebf3954696428dafd793c1dbe9072.scn" ]
+source_file="res://Assets/Board/Tiles/IB_TimeWarp/time_warp.glb"
+dest_files=[ "res://.import/time_warp.glb-fc3588e239e0699f8239594a0db30974.scn" ]
 
 [params]
 

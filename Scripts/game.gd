@@ -33,17 +33,18 @@ func _ready():
 	board_tiles = board.request_board_tiles()
 	for tile in board_tiles:
 		tile.connect("queue_property_prompt", self, "_on_queue_property_prompt")
+		tile.connect("queue_time_travel", self, "_on_queue_time_travel")
+		tile.connect("add_money", self, "change_player_money")
 	
 	# setup player
-	player = initiate_player(0, global_time, 0)
-	players.push_back(player)
-	add_memory()
+	player = initiate_player(0, global_time, 0, 500)
+	change_player_money(0,0)
 	
 	# setup dice
 	dice.connect("rolled_value", self, "_on_rolled_value")
 
 # UI connections
-var can_roll: bool = true
+var can_roll: bool = false
 func _on_roll_dice():
 	if can_roll:
 		can_roll = false
@@ -53,35 +54,22 @@ func _on_ti_handled():
 	handle_turn_instruction()
 
 func _on_add_player(time: int):
-	if !memory.has(time):
-		print("player has not been in this time period yet")
-	else:
-		print(memory[time])
-		var player_data = memory[time][0]
-		var tile = player_data.get("tile")
-		var player = initiate_player(tile, time, 0)
-		players.push_back(player)
+	_on_rolled_value(time)
 
 func _on_change_time(time: int):
-	global_time = time
-	ui_update_times()
-	for player in players:
-		player.vanish()
-	var time_state = memory.get(time)
-	if time_state != null:
-		for player_data in time_state:
-			var tile = player_data.get("tile")
-			var player = initiate_player(tile, time, player_data.get("continuity"))
-			players.push_back(player)
-	
-	player.continuity += 1
-	add_memory()
+	change_time(time)
+	handle_turn_instruction()
 
 # Board connections
 func _on_queue_property_prompt(tile_idx: int):
 	turn_queue.push_back({
 		"command": "property_prompt",
 		"tile": tile_idx
+	})
+
+func _on_queue_time_travel():
+	turn_queue.push_back({
+		"command": "time_travel"
 	})
 
 # Dice connection
@@ -105,9 +93,6 @@ func _on_player_landed(idx: int):
 		ui_update_times()	
 		
 		handle_turn_instruction()
-		
-		add_memory()
-		instructions = generate_instructions()
 	else:
 		check_instructions()
 
@@ -115,14 +100,14 @@ var vanished_count = 0
 func _on_player_vanished(idx: int):
 	if idx != 0:
 		remove_child(players[idx])
+		check_instructions()
 	vanished_count += 1
 	if(vanished_count == players.size()):
 		vanished_count = 0
 		players = [player]
-	check_instructions()
 
 # Helpers
-func initiate_player(tile_idx: int, time: int, continuity: int) -> KinematicBody:
+func initiate_player(tile_idx: int, time: int, continuity: int, money: int) -> KinematicBody:
 	var player: KinematicBody = player_scene.instance()
 	var initial_tile: Spatial  = board_tiles[tile_idx]
 	var initial_position: Vector3 = initial_tile.translation
@@ -138,16 +123,21 @@ func initiate_player(tile_idx: int, time: int, continuity: int) -> KinematicBody
 	player.tile = tile_idx
 	player.time = time
 	player.continuity = continuity
+	player.money = money
 	
 	player.connect("player_first_land", self, "_on_player_first_land")
 	player.connect("player_landed", self, "_on_player_landed")
 	player.connect("player_vanished", self, "_on_player_vanished")
+	
+	players.push_back(player)
 	add_child(player)
 	
 	return player
 
 # there is currently no checks for infinite looping
 func generate_path(s_idx: int, e_idx: int) -> Array:
+	if s_idx == (e_idx + 1) % board_tiles.size():
+		return []
 	var idx: int = s_idx
 	var path: Array = [board_tiles[idx]]
 	while idx != e_idx:
@@ -157,6 +147,7 @@ func generate_path(s_idx: int, e_idx: int) -> Array:
 
 func handle_turn_instruction():
 	if turn_queue.empty():
+		generate_instructions()
 		check_instructions()
 	else:
 		var instruction: Dictionary = turn_queue.pop_front()
@@ -164,20 +155,23 @@ func handle_turn_instruction():
 		match command:
 			"property_prompt":
 				var tile: int = instruction.get("tile")
-				UI.show_property_popup(tile)
+				handle_turn_instruction()
+#				UI.show_property_popup(tile)
+			"time_travel":
+				if randf() < 0.7:
+					change_time(global_time - round(rand_range(3,10)))
+				else:
+					change_time(global_time + round(rand_range(3,8)))
+				handle_turn_instruction()
 			_:
 				print("Unkown Command '%s'" % command)
 
-func generate_instructions() -> Array:
-	var instructions: Array = []
-	
-	# get continuity data for last, current, and next times
-	var prev_state = memory.get(global_time-1)
-	var prev_continuities: Dictionary = {}
-	if prev_state != null:
-		for player_data in prev_state:
-			prev_continuities[player_data.get("continuity")] = player_data
-	
+func generate_instructions():
+	# get existing continuities
+	var prev_continuity: Array
+	for player in players:
+		prev_continuity.push_back(player.continuity)
+		
 	var time_state = memory.get(global_time)
 	var time_continuities: Dictionary = {}
 	if time_state != null:
@@ -192,9 +186,8 @@ func generate_instructions() -> Array:
 	
 	# add new players
 	for continuity in time_continuities.keys():
-		if not prev_continuities.has(continuity) and time_continuities.get(continuity).get("player_time") != player.time:
+		if not prev_continuity.has(continuity) and next_continuities.has(continuity):
 			instructions.append({
-				"player": null,
 				"command": "add",
 				"data": time_continuities.get(continuity)
 			})
@@ -211,22 +204,11 @@ func generate_instructions() -> Array:
 				"command": "mov",
 				"data": data
 			})
-	
-	# remove players
-	for continuity in time_continuities.keys():
-		if not next_continuities.has(continuity) and time_continuities.get(continuity).get("player_time") != player.time:
-			var player: KinematicBody
-			for test_player in players:
-				if test_player.continuity == continuity:
-					player = test_player
-					break
-			instructions.append({
-				"player": player,
-				"command": "rem",
-				"data": time_continuities.get(continuity)
-			})
-	
-	return instructions
+			if not next_continuities.has(player.continuity):
+				instructions.append({
+					"player": player,
+					"command": "rem"
+				})
 
 func execute_instruction():
 	var instruction: Dictionary = instructions.pop_front()
@@ -235,8 +217,7 @@ func execute_instruction():
 	var data = instruction.get("data")
 	match command:
 		"add":
-			player = initiate_player(data.get("tile"), global_time, data.get("continuity"))
-			players.push_back(player)
+			initiate_player(data.get("tile"), global_time, data.get("continuity"), data.get("money"))
 		"mov":
 			var next: int = (player.tile + 1)%board_tiles.size()
 			var target: int = data.get("tile")
@@ -255,16 +236,33 @@ func check_instructions():
 		execute_instruction()
 	else:
 		can_roll = true
+		add_memory()
+
+func change_time(time: int):
+	add_memory()
+	
+	global_time = time
+	ui_update_times()
+	for player in players:
+		player.vanish()
+		
+	player.continuity += 1
 
 func ui_update_times():
 	UI.set_global_time(global_time)
 	UI.set_player_time(player.time)
 
+func change_player_money(idx: int, ammount: int):
+	players[idx].money += ammount
+	if idx == 0:
+		UI.set_player_money(player.money)
+
 func add_memory():
 	var new_mem: Dictionary = {
 		"player_time": player.time,
 		"tile": player.tile,
-		"continuity": player.continuity
+		"continuity": player.continuity,
+		"money": player.money
 	}
 	
 	if memory.has(global_time):

@@ -7,6 +7,7 @@ var idx: int
 var time: int
 var tile: int
 var continuity: int
+var money: int
 
 var target_queue: Array
 

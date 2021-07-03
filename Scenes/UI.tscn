@@ -225,45 +225,52 @@ margin_bottom = 80.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="CenterContainer3" type="CenterContainer" parent="areas/right/list/time"]
-margin_right = 133.0
-margin_bottom = 80.0
-size_flags_horizontal = 3
-
 [node name="global" type="CenterContainer" parent="areas/right/list/time"]
-margin_left = 137.0
-margin_right = 270.0
+margin_right = 202.0
 margin_bottom = 80.0
 size_flags_horizontal = 3
 
 [node name="val" type="Label" parent="areas/right/list/time/global"]
-margin_left = 13.0
+margin_left = 47.0
 margin_top = 28.0
-margin_right = 120.0
+margin_right = 154.0
 margin_bottom = 52.0
 custom_fonts/font = ExtResource( 3 )
 text = "Global: 1"
 
 [node name="player" type="CenterContainer" parent="areas/right/list/time"]
-margin_left = 274.0
+margin_left = 206.0
 margin_right = 408.0
 margin_bottom = 80.0
 size_flags_horizontal = 3
 
 [node name="val" type="Label" parent="areas/right/list/time/player"]
-margin_left = 13.0
+margin_left = 47.0
 margin_top = 28.0
-margin_right = 120.0
+margin_right = 154.0
 margin_bottom = 52.0
 custom_fonts/font = ExtResource( 3 )
 text = "Player: 1"
 
-[node name="1" type="Control" parent="areas/right/list"]
+[node name="money" type="HBoxContainer" parent="areas/right/list"]
 margin_top = 84.0
 margin_right = 408.0
 margin_bottom = 164.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+
+[node name="player" type="CenterContainer" parent="areas/right/list/money"]
+margin_right = 408.0
+margin_bottom = 80.0
+size_flags_horizontal = 3
+
+[node name="val" type="Label" parent="areas/right/list/money/player"]
+margin_left = 146.0
+margin_top = 28.0
+margin_right = 261.0
+margin_bottom = 52.0
+custom_fonts/font = ExtResource( 3 )
+text = "Money: 0"
 
 [node name="2" type="Control" parent="areas/right/list"]
 margin_top = 168.0
@@ -334,6 +341,7 @@ __meta__ = {
 }
 
 [node name="property_popup" type="MarginContainer" parent="."]
+visible = false
 margin_right = 1230.0
 margin_bottom = 670.0
 size_flags_vertical = 3

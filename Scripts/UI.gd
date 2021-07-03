@@ -52,7 +52,11 @@ func set_global_time(time: int):
 onready var player_time: Label = $"areas/right/list/time/player/val"
 func set_player_time(time: int):
 	player_time.text = "Player: %d" % time
-	
+
+onready var player_money: Label = $"areas/right/list/money/player/val"
+func set_player_money(ammount: int):
+	player_money.text = "Money: £%d" % ammount
+
 func show_property_popup(tile_idx: int):
 	property_popup.popup(tile_idx)
 
