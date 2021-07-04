@@ -57,6 +57,6 @@ onready var player_money: Label = $"areas/right/list/money/player/val"
 func set_player_money(ammount: int):
 	player_money.text = "Money: £%d" % ammount
 
-func show_property_popup(tile_idx: int):
-	property_popup.popup(tile_idx)
+func show_property_popup(tile_idx: int, price: int, can_buy: bool):
+	property_popup.popup(tile_idx, price, can_buy)
 

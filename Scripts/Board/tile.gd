@@ -24,8 +24,11 @@ func set_tile_type(new_val):
 		else:
 			child.visible = false
 
-var owners: Dictionary = {}
+var buy_cost: int = 100
+var land_cost: int = 20
+
 # dictionary which stores owners and the turn where they initially were bought
+var owners: Dictionary = {}
 
 func _ready():
 	idx = int(name)

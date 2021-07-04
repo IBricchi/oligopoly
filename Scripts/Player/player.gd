@@ -8,6 +8,7 @@ var time: int
 var tile: int
 var continuity: int
 var money: int
+var leaces: Array
 
 var target_queue: Array
 

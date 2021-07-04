@@ -37,7 +37,7 @@ func _ready():
 		tile.connect("add_money", self, "change_player_money")
 	
 	# setup player
-	player = initiate_player(0, global_time, 0, 500)
+	player = initiate_player(0, global_time, 0, 50, [])
 	change_player_money(0,0)
 	
 	# setup dice
@@ -62,10 +62,15 @@ func _on_change_time(time: int):
 
 # Board connections
 func _on_queue_property_prompt(tile_idx: int):
-	turn_queue.push_back({
+	var instruction: Dictionary = {
 		"command": "property_prompt",
-		"tile": tile_idx
-	})
+		"tile": tile_idx,
+		"price": board_tiles[tile_idx].buy_cost,
+		"can_buy": false
+	}
+	if player.money >= board_tiles[tile_idx].buy_cost:
+		instruction["can_buy"] = true
+	turn_queue.push_back(instruction)
 
 func _on_queue_time_travel():
 	turn_queue.push_back({
@@ -107,7 +112,7 @@ func _on_player_vanished(idx: int):
 		players = [player]
 
 # Helpers
-func initiate_player(tile_idx: int, time: int, continuity: int, money: int) -> KinematicBody:
+func initiate_player(tile_idx: int, time: int, continuity: int, money: int, leaces: Array) -> KinematicBody:
 	var player: KinematicBody = player_scene.instance()
 	var initial_tile: Spatial  = board_tiles[tile_idx]
 	var initial_position: Vector3 = initial_tile.translation
@@ -154,9 +159,7 @@ func handle_turn_instruction():
 		var command: String = instruction.get("command")
 		match command:
 			"property_prompt":
-				var tile: int = instruction.get("tile")
-				handle_turn_instruction()
-#				UI.show_property_popup(tile)
+				UI.show_property_popup(instruction.get("tile"), instruction.get("price"), instruction.get("can_buy"))
 			"time_travel":
 				if randf() < 0.7:
 					change_time(global_time - round(rand_range(3,10)))
@@ -217,7 +220,7 @@ func execute_instruction():
 	var data = instruction.get("data")
 	match command:
 		"add":
-			initiate_player(data.get("tile"), global_time, data.get("continuity"), data.get("money"))
+			initiate_player(data.get("tile"), global_time, data.get("continuity"), data.get("money"), data.get("leaces"))
 		"mov":
 			var next: int = (player.tile + 1)%board_tiles.size()
 			var target: int = data.get("tile")
@@ -262,7 +265,8 @@ func add_memory():
 		"player_time": player.time,
 		"tile": player.tile,
 		"continuity": player.continuity,
-		"money": player.money
+		"money": player.money,
+		"leaces": player.leaces
 	}
 	
 	if memory.has(global_time):

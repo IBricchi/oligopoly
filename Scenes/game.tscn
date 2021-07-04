@@ -17,5 +17,6 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0 )
 
 [node name="dice" parent="." instance=ExtResource( 4 )]
 transform = Transform( 0.849304, -0.446513, 0.28162, 0.527905, 0.718359, -0.453075, 0, 0.533467, 0.845821, 0.255413, 2.40494, -0.806922 )
+visible = false
 
 [node name="UI" parent="." instance=ExtResource( 3 )]
