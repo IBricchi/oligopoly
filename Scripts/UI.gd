@@ -43,7 +43,8 @@ func _on_change_time():
 func _on_buy_property(tile_idx: int, do: bool):
 	if do:
 		emit_signal("buy_property", tile_idx)
-	emit_signal("ti_handled")
+	else:
+		emit_signal("ti_handled")
 
 onready var global_time: Label = $"areas/right/list/time/global/val"
 func set_global_time(time: int):

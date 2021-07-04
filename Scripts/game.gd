@@ -28,6 +28,7 @@ func _ready():
 	UI.connect("ti_handled", self, "_on_ti_handled")
 	UI.connect("add_player", self, "_on_add_player")
 	UI.connect("change_time", self, "_on_change_time")
+	UI.connect("buy_property", self, "_on_ui_buy_property")
 	
 	# setup board
 	board_tiles = board.request_board_tiles()
@@ -37,7 +38,7 @@ func _ready():
 		tile.connect("add_money", self, "change_player_money")
 	
 	# setup player
-	player = initiate_player(0, global_time, 0, 50, [])
+	player = initiate_player(0, global_time, 0, 500, [])
 	change_player_money(0,0)
 	
 	# setup dice
@@ -59,6 +60,9 @@ func _on_add_player(time: int):
 func _on_change_time(time: int):
 	change_time(time)
 	handle_turn_instruction()
+
+func _on_ui_buy_property(tile_idx: int):
+	player_buy_property(0, tile_idx)
 
 # Board connections
 func _on_queue_property_prompt(tile_idx: int):
@@ -92,9 +96,9 @@ func _on_player_first_land(idx: int):
 	check_instructions()
 
 func _on_player_landed(idx: int):
+	players[idx].step()	
 	if idx == 0:
 		global_time += 1
-		player.time += 1
 		ui_update_times()	
 		
 		handle_turn_instruction()
@@ -129,6 +133,7 @@ func initiate_player(tile_idx: int, time: int, continuity: int, money: int, leac
 	player.time = time
 	player.continuity = continuity
 	player.money = money
+	player.leaces = leaces
 	
 	player.connect("player_first_land", self, "_on_player_first_land")
 	player.connect("player_landed", self, "_on_player_landed")
@@ -168,6 +173,16 @@ func handle_turn_instruction():
 				handle_turn_instruction()
 			_:
 				print("Unkown Command '%s'" % command)
+
+func player_buy_property(idx: int, tile_idx: int):
+	var player = players[idx]
+	var tile = board_tiles[tile_idx]
+	change_player_money(idx, -tile.buy_cost)
+	player.leaces.push_back({
+		"tile": tile_idx,
+		"ttl": 10
+	})
+	handle_turn_instruction()
 
 func generate_instructions():
 	# get existing continuities
@@ -226,7 +241,6 @@ func execute_instruction():
 			var target: int = data.get("tile")
 			var path: Array = generate_path(next, target)
 			player.tile = target
-			player.time += 1
 			player.queue_target(path)
 		"rem":
 			remove_player(player.idx)

@@ -77,6 +77,17 @@ func _physics_process(delta):
 func queue_target(target: Array):
 	target_queue.push_back(target)
 
+func step():
+	time += 1
+	var new_leaces: Array = []
+	for leace in leaces:
+		leace["ttl"] -= 1
+		if leace["ttl"] > 0:
+			new_leaces.push_back(leace)
+		else:
+			print("Player %d lost leace for tile %d" % [idx, leace["tile"]])
+	leaces = new_leaces
+
 func force_land():
 	emit_signal("player_landed", idx)	
 
