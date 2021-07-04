@@ -89,7 +89,7 @@ func step():
 	leaces = new_leaces
 
 func force_land():
-	emit_signal("player_landed", idx)	
+	emit_signal("player_landed", idx)
 
 func vanish():
 	emit_signal("player_vanished", idx)

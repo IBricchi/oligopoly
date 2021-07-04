@@ -27,7 +27,6 @@ tracks/0/keys = {
 }
 
 [node name="tile" type="Spatial"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05, 0 )
 script = ExtResource( 3 )
 
 [node name="body" type="StaticBody" parent="."]
