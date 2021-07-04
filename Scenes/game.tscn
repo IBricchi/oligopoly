@@ -5,6 +5,7 @@
 [ext_resource path="res://Scenes/UI.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Scenes/Extra/dice.tscn" type="PackedScene" id=4]
 [ext_resource path="res://Scenes/Board/b2.tscn" type="PackedScene" id=5]
+[ext_resource path="res://default_env.tres" type="Environment" id=6]
 
 [node name="game" type="Node"]
 script = ExtResource( 2 )
@@ -25,3 +26,6 @@ transform = Transform( 0.849304, -0.446513, 0.28162, 0.527905, 0.718359, -0.4530
 visible = false
 
 [node name="UI" parent="." instance=ExtResource( 3 )]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource( 6 )
