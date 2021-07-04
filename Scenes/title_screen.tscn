@@ -25,17 +25,31 @@ mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="title" type="CenterContainer" parent="cont"]
+[node name="title" type="MarginContainer" parent="cont"]
 margin_right = 1250.0
 margin_bottom = 343.0
 mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+custom_constants/margin_right = 50
+custom_constants/margin_top = 50
+custom_constants/margin_left = 50
+custom_constants/margin_bottom = 50
 
-[node name="title" type="Sprite" parent="cont/title"]
-position = Vector2( 621.103, 143.631 )
-scale = Vector2( 0.562561, 0.562561 )
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="cont/title"]
+margin_left = 50.0
+margin_top = 50.0
+margin_right = 1200.0
+margin_bottom = 293.0
+
+[node name="TextureRect" type="TextureRect" parent="cont/title/AspectRatioContainer"]
+margin_left = 574.5
+margin_right = 574.5
+margin_bottom = 243.0
+size_flags_horizontal = 4
 texture = ExtResource( 1 )
+expand = true
+stretch_mode = 4
 
 [node name="options" type="HBoxContainer" parent="cont"]
 margin_top = 347.0
