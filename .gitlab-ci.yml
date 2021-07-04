@@ -1,13 +1,10 @@
 image: barichello/godot-ci:3.2.3
 
-# NOTE: the `cd` command in each build stage is not necessary if your
-# project.godot is at the repo root
-
 # Cache imported assets between runs
-cache:
-  key: import-assets
-  paths:
-    - .import/
+# cache:
+#   key: import-assets
+#   paths:
+#     - .import/
 
 stages:
   - export
@@ -54,12 +51,13 @@ web:
   stage: export
   script:
     - mkdir -v -p build/web
-    - cd $EXPORT_NAME
-    - godot -v --export "HTML5" ../build/web/index.html
+    - godot -v --export "HTML5" build/web/index.html
   artifacts:
     name: $EXPORT_NAME-$CI_JOB_NAME
     paths:
       - build/web
+  only:
+    - master
 
 # Itch.io Deploy
 itch:
@@ -68,3 +66,5 @@ itch:
     - web
   script:
     - butler push build/web $ITCHIO_NAME:web
+  only:
+    - master
