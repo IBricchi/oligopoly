@@ -8,7 +8,7 @@ var time: int
 var tile: int
 var continuity: int
 var money: int
-var leaces: Array
+var leases: Array
 
 var target_queue: Array
 
@@ -79,14 +79,14 @@ func queue_target(target: Array):
 
 func step():
 	time += 1
-	var new_leaces: Array = []
-	for leace in leaces:
-		leace["ttl"] -= 1
-		if leace["ttl"] > 0:
-			new_leaces.push_back(leace)
+	var new_leases: Array = []
+	for lease in leases:
+		lease["ttl"] -= 1
+		if lease["ttl"] > 0:
+			new_leases.push_back(lease)
 		else:
-			print("Player %d lost leace for tile %d" % [idx, leace["tile"]])
-	leaces = new_leaces
+			print("Player %d lost lease for tile %d" % [idx, lease["tile"]])
+	leases = new_leases
 
 func force_land():
 	emit_signal("player_landed", idx)

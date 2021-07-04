@@ -33,7 +33,7 @@ func _ready():
 	# setup board
 	board_tiles = board.request_board_tiles()
 	for tile in board_tiles:
-		tile.connect("queue_property_prompt", self, "_on_queue_property_prompt")
+		tile.connect("queue_property_action", self, "_on_queue_property_action")
 		tile.connect("queue_time_travel", self, "_on_queue_time_travel")
 		tile.connect("add_money", self, "change_player_money")
 	
@@ -65,16 +65,26 @@ func _on_ui_buy_property(tile_idx: int):
 	player_buy_property(0, tile_idx)
 
 # Board connections
-func _on_queue_property_prompt(tile_idx: int):
-	var instruction: Dictionary = {
-		"command": "property_prompt",
-		"tile": tile_idx,
-		"price": board_tiles[tile_idx].buy_cost,
-		"can_buy": false
-	}
-	if player.money >= board_tiles[tile_idx].buy_cost:
-		instruction["can_buy"] = true
-	turn_queue.push_back(instruction)
+func _on_queue_property_action(idx: int, tile_idx: int):
+	var owners: Array = get_tile_owners(tile_idx)
+		
+	if not owners.empty():
+		if not owners.has(idx):
+			var tile = board_tiles[tile_idx]
+			var rent_fee = tile.rent_cost
+			for player_idx in owners:
+				change_player_money(idx, -rent_fee)
+				change_player_money(player_idx, rent_fee)
+	elif idx == 0:
+		var instruction: Dictionary = {
+			"command": "property_prompt",
+			"tile": tile_idx,
+			"price": board_tiles[tile_idx].buy_cost,
+			"can_buy": false
+		}
+		if player.money >= board_tiles[tile_idx].buy_cost:
+			instruction["can_buy"] = true
+		turn_queue.push_back(instruction)
 
 func _on_queue_time_travel():
 	turn_queue.push_back({
@@ -111,7 +121,7 @@ func _on_player_vanished(idx: int):
 		check_instructions()
 
 # Helpers
-func initiate_player(tile_idx: int, time: int, continuity: int, money: int, leaces: Array) -> KinematicBody:
+func initiate_player(tile_idx: int, time: int, continuity: int, money: int, leases: Array) -> KinematicBody:
 	var player: KinematicBody = player_scene.instance()
 	var initial_tile: Spatial  = board_tiles[tile_idx]
 	var initial_position: Vector3 = initial_tile.translation
@@ -119,7 +129,7 @@ func initiate_player(tile_idx: int, time: int, continuity: int, money: int, leac
 	player.translation = initial_position + Vector3.UP * 3
 	player.scale *= 0.4
 	
-	var rand_offset: Vector3 = Vector3(rand_range(-1.5,1.5),0,rand_range(-1.5,1.5))
+	var rand_offset: Vector3 = Vector3(rand_range(-1.3,1.3),0,rand_range(-1.3,1.3))
 	player.get_node("col").translation += rand_offset
 	player.get_node("body_cont").translation += rand_offset
 	
@@ -128,7 +138,7 @@ func initiate_player(tile_idx: int, time: int, continuity: int, money: int, leac
 	player.time = time
 	player.continuity = continuity
 	player.money = money
-	player.leaces = leaces
+	player.leases = leases.duplicate(true)
 	
 	player.connect("player_first_land", self, "_on_player_first_land")
 	player.connect("player_landed", self, "_on_player_landed")
@@ -159,8 +169,7 @@ func handle_turn_instruction():
 		var command: String = instruction.get("command")
 		match command:
 			"property_prompt":
-#				UI.show_property_popup(instruction.get("tile"), instruction.get("price"), instruction.get("can_buy"))
-				handle_turn_instruction()
+				UI.show_property_popup(instruction.get("tile"), instruction.get("price"), instruction.get("can_buy"))
 			"time_travel":
 				if randf() < 0.7:
 					change_time(global_time - round(rand_range(3,10)))
@@ -170,11 +179,20 @@ func handle_turn_instruction():
 			_:
 				print("Unkown Command '%s'" % command)
 
+func get_tile_owners(tile_idx: int) -> Array:
+	var owners: Array = []
+	for player in players:
+		for lease in player.leases:
+			if lease.get("tile") == tile_idx:
+				owners.push_back(player.idx)
+				break
+	return owners
+
 func player_buy_property(idx: int, tile_idx: int):
 	var player = players[idx]
 	var tile = board_tiles[tile_idx]
 	change_player_money(idx, -tile.buy_cost)
-	player.leaces.push_back({
+	player.leases.push_back({
 		"tile": tile_idx,
 		"ttl": 10
 	})
@@ -224,17 +242,17 @@ func generate_instructions():
 				"command": "mov",
 				"data": data
 			})
-			for leace in data.get("leaces"):
-				var new_leace: bool = true
-				for owned_leace in player.leaces:
-					if owned_leace.get("tile") == leace.get("tile"):
-						new_leace = false
+			for lease in data.get("leases"):
+				var new_lease: bool = true
+				for owned_lease in player.leases:
+					if owned_lease.get("tile") == lease.get("tile"):
+						new_lease = false
 						break
-				if new_leace:
+				if new_lease:
 					instructions.append({
 						"player": player,
 						"command": "buy_property",
-						"leace": leace
+						"lease": lease
 					})
 			if not next_continuities.has(player.continuity):
 				instructions.append({
@@ -248,7 +266,7 @@ func execute_instruction():
 	match command:
 		"add":
 			var data = instruction.get("data")
-			initiate_player(data.get("tile"), global_time, data.get("continuity"), data.get("money"), data.get("leaces"))
+			initiate_player(data.get("tile"), global_time, data.get("continuity"), data.get("money"), data.get("leases"))
 		"mov":
 			var player = instruction.get("player")
 			var data = instruction.get("data")
@@ -259,9 +277,9 @@ func execute_instruction():
 			player.queue_target(path)
 		"buy_property":
 			var player = instruction.get("player")
-			var leace = instruction.get("leace")
-			var tile = leace.get("tile")
-			if player.money >= board_tiles[tile].buy_cost:
+			var lease = instruction.get("lease")
+			var tile = lease.get("tile")
+			if get_tile_owners(tile).empty() and player.money >= board_tiles[tile].buy_cost:
 				player_buy_property(player.idx, tile)
 		"rem":
 			var player = instruction.get("player")
@@ -306,7 +324,7 @@ func add_memory():
 		"tile": player.tile,
 		"continuity": player.continuity,
 		"money": player.money,
-		"leaces": player.leaces
+		"leases": player.leases.duplicate(true)
 	}
 	
 	if memory.has(global_time):

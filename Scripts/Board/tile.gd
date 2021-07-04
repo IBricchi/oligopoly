@@ -25,25 +25,20 @@ func set_tile_type(new_val):
 			child.visible = false
 
 var buy_cost: int = 100
-var land_cost: int = 20
-
-# dictionary which stores owners and the turn where they initially were bought
-var owners: Dictionary = {}
+var rent_cost: int = 20
 
 func _ready():
 	idx = int(name)
 	$"body/model".get_child(tile_type).visible = true
 
-signal queue_property_prompt(idx)
+signal queue_property_action(player_idx, idx)
 signal queue_time_travel
 signal add_money(idx, ammount)
 
 func player_lands(player_idx: int):
 	match tile_type:
 		tt.property:
-			if owners.empty():
-				if player_idx == 0: # if main player
-					emit_signal("queue_property_prompt", idx)
+			emit_signal("queue_property_action", player_idx, idx)
 		tt.chance:
 			print("chance not yet implemented")
 		tt.time_warp:
