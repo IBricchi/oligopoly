@@ -8,6 +8,7 @@ var time: int
 var tile: int
 var continuity: int
 var money: int
+var leases: Array
 
 var target_queue: Array
 
@@ -76,8 +77,19 @@ func _physics_process(delta):
 func queue_target(target: Array):
 	target_queue.push_back(target)
 
+func step():
+	time += 1
+	var new_leases: Array = []
+	for lease in leases:
+		lease["ttl"] -= 1
+		if lease["ttl"] > 0:
+			new_leases.push_back(lease)
+		else:
+			print("Player %d lost lease for tile %d" % [idx, lease["tile"]])
+	leases = new_leases
+
 func force_land():
-	emit_signal("player_landed", idx)	
+	emit_signal("player_landed", idx)
 
 func vanish():
 	emit_signal("player_vanished", idx)

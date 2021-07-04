@@ -1,7 +1,9 @@
 extends MarginContainer
 
 var tile_idx: int
+var respond: bool
 
+onready var prompt: Label = $"body/split/margin/centre/prompt"
 onready var no: Button = $"body/split/options/MarginContainer/no"
 onready var yes: Button = $"body/split/options/MarginContainer2/yes"
 
@@ -16,9 +18,18 @@ func _on_no():
 	visible = false
 	
 func _on_yes():
-	emit_signal("buy_property", tile_idx, true)
+	emit_signal("buy_property", tile_idx, true and respond)
 	visible = false
 
-func popup(idx: int):
+func popup(idx: int, price: int, can_buy: bool):
 	tile_idx = idx
+	respond = can_buy
+	if can_buy:
+		prompt.text = "Would you like to buy this property for £%d." % price
+		no.visible = true
+		yes.text = "buy"
+	else:
+		prompt.text = "You don't have enough money to buy this property."
+		no.visible = false
+		yes.text = "ok"
 	visible = true
