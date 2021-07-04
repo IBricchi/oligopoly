@@ -4,7 +4,6 @@
 [ext_resource path="res://Scripts/game.gd" type="Script" id=2]
 [ext_resource path="res://Scenes/UI.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Scenes/Extra/dice.tscn" type="PackedScene" id=4]
-[ext_resource path="res://Scenes/Board/b2.tscn" type="PackedScene" id=5]
 [ext_resource path="res://default_env.tres" type="Environment" id=6]
 
 [node name="game" type="Node"]
@@ -14,12 +13,8 @@ script = ExtResource( 2 )
 transform = Transform( 1, 0, 0, 0, 0.436723, 0.899596, 0, -0.899596, 0.436723, 0, 12.74, 7.41912 )
 current = true
 
-[node name="board" parent="." instance=ExtResource( 5 )]
+[node name="board" parent="." instance=ExtResource( 1 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0 )
-
-[node name="board3" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0 )
-visible = false
 
 [node name="dice" parent="." instance=ExtResource( 4 )]
 transform = Transform( 0.849304, -0.446513, 0.28162, 0.527905, 0.718359, -0.453075, 0, 0.533467, 0.845821, 0.255413, 2.40494, -0.806922 )
