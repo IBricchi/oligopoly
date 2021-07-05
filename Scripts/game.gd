@@ -7,6 +7,9 @@ onready var UI: MarginContainer = $UI
 onready var board: Spatial = $board
 var board_tiles: Array
 
+# silly question mark
+var question_scene: Resource = preload("res://Scenes/Extra/FloatingQuestion.tscn")
+
 # player data
 var player: KinematicBody
 var player_scene: Resource = preload("res://Scenes/Player/player.tscn")
@@ -337,3 +340,11 @@ func remove_player(idx: int):
 	for i in range(idx+1, players.size()):
 		players[i].idx -= 1
 	players.remove(idx)
+	
+# drops question marks from the sky 
+func drop_question_marks():
+	for i in range(12):
+		var floating_question: RigidBody
+		floating_question = question_scene.instance()
+		self.add_child(floating_question)
+			

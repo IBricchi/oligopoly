@@ -40,6 +40,7 @@ func player_lands(player_idx: int):
 		tt.property:
 			emit_signal("queue_property_action", player_idx, idx)
 		tt.chance:
+			get_node("/root/game").drop_question_marks()
 			print("chance not yet implemented")
 		tt.time_warp:
 			if player_idx == 0:
