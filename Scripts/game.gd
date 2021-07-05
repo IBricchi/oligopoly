@@ -343,7 +343,7 @@ func remove_player(idx: int):
 	
 # drops question marks from the sky 
 func drop_question_marks():
-	for i in range(12):
+	for i in range(15):
 		var floating_question: RigidBody
 		floating_question = question_scene.instance()
 		self.add_child(floating_question)
