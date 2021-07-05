@@ -10,9 +10,9 @@ extends RigidBody
 func _ready():
 	visible = true
 	var phi = rand_range(0,2*PI)
-	translation = Vector3(10*cos(phi), 30, 10*sin(phi))
+	translation = Vector3(13*cos(phi), 25, 13*sin(phi))
 	angular_velocity = Vector3(rand_range(0,2), rand_range(10,20), rand_range(0,2))
 
 func _process(delta):
-	if translation.y < - 40:
+	if translation.y < - 50:
 		self.queue_free() 
