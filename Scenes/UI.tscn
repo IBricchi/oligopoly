@@ -365,21 +365,48 @@ margin_bottom = 363.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 split_offset = 112
+dragger_visibility = 1
 
-[node name="data" type="CenterContainer" parent="property_popup/body/split"]
+[node name="margin" type="MarginContainer" parent="property_popup/body/split"]
 margin_right = 516.0
 margin_bottom = 284.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+custom_constants/margin_right = 20
+custom_constants/margin_top = 0
+custom_constants/margin_left = 20
 
-[node name="prompt" type="Label" parent="property_popup/body/split/data"]
-margin_left = 88.0
-margin_top = 135.0
-margin_right = 428.0
-margin_bottom = 149.0
+[node name="centre" type="VBoxContainer" parent="property_popup/body/split/margin"]
+margin_left = 20.0
+margin_right = 496.0
+margin_bottom = 284.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-text = "You can buy this property ! My aren't you a lucky one."
+
+[node name="Control" type="Control" parent="property_popup/body/split/margin/centre"]
+margin_right = 476.0
+margin_bottom = 72.0
+size_flags_vertical = 3
+
+[node name="prompt" type="Label" parent="property_popup/body/split/margin/centre"]
+margin_top = 76.0
+margin_right = 476.0
+margin_bottom = 208.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_fonts/font = ExtResource( 3 )
+text = "Sed omnis possimusbeatae ut dolore necessitatibus enim voluptatem. Rem vero omnis consequatur et odio ut omnis. Voluptatem quia in deleniti quidem est nesciunt."
+align = 1
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Control2" type="Control" parent="property_popup/body/split/margin/centre"]
+margin_top = 212.0
+margin_right = 476.0
+margin_bottom = 284.0
+size_flags_vertical = 3
 
 [node name="options" type="HBoxContainer" parent="property_popup/body/split"]
 margin_top = 296.0
@@ -405,22 +432,8 @@ margin_right = 196.0
 margin_bottom = 50.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-
-[node name="Label" type="Label" parent="property_popup/body/split/options/MarginContainer/no"]
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -62.0
-margin_top = -7.0
-margin_right = 62.0
-margin_bottom = 7.0
-text = "Fuck no."
-align = 1
-valign = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
+custom_fonts/font = ExtResource( 3 )
+text = "no"
 
 [node name="MarginContainer2" type="MarginContainer" parent="property_popup/body/split/options"]
 margin_left = 260.0
@@ -440,17 +453,5 @@ margin_right = 196.0
 margin_bottom = 50.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-
-[node name="Label" type="Label" parent="property_popup/body/split/options/MarginContainer2/yes"]
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -62.0
-margin_top = -7.0
-margin_right = 62.0
-margin_bottom = 7.0
-text = "Hell yeah I'll buy it."
-__meta__ = {
-"_edit_use_anchors_": false
-}
+custom_fonts/font = ExtResource( 3 )
+text = "buy"
