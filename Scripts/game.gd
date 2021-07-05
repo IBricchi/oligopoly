@@ -27,6 +27,8 @@ var turn_queue: Array = []
 
 func _ready():
 	# setup UI
+	randomize()
+	
 	UI.connect("roll", self, "_on_roll_dice")
 	UI.connect("ti_handled", self, "_on_ti_handled")
 	UI.connect("add_player", self, "_on_add_player")
@@ -343,7 +345,7 @@ func remove_player(idx: int):
 	
 # drops question marks from the sky 
 func drop_question_marks():
-	for i in range(15):
+	for i in range(12):
 		var floating_question: RigidBody
 		floating_question = question_scene.instance()
 		self.add_child(floating_question)

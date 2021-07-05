@@ -25,11 +25,11 @@ func popup(idx: int, price: int, can_buy: bool):
 	tile_idx = idx
 	respond = can_buy
 	if can_buy:
-		prompt.text = "Would you like to buy this property for £%d." % price
+		prompt.text = "This property is for sale. \n Would you like to buy this property for £%d ?" % price
 		no.visible = true
-		yes.text = "buy"
+		yes.text = "Yes, buy."
 	else:
 		prompt.text = "You don't have enough money to buy this property."
 		no.visible = false
-		yes.text = "ok"
+		yes.text = "Unfortunate."
 	visible = true
