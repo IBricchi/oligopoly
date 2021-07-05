@@ -8,9 +8,11 @@ extends RigidBody
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
+	visible = true
+	var phi = rand_range(0,2*PI)
+	translation = Vector3(10*cos(phi), 30, 10*sin(phi))
+	angular_velocity = Vector3(rand_range(0,2), rand_range(10,20), rand_range(0,2))
 
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+func _process(delta):
+	if translation.y < - 40:
+		self.queue_free() 

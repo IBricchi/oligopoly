@@ -34,6 +34,10 @@ window/size/height=720
 singletons=[ "res://git_api.gdnlib" ]
 singletons_disabled=[  ]
 
+[global]
+
+layer=false
+
 [input]
 
 space={
