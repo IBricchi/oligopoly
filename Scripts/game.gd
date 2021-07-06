@@ -7,6 +7,9 @@ onready var UI: MarginContainer = $UI
 onready var board: Spatial = $board
 var board_tiles: Array
 
+# silly question mark
+var question_scene: Resource = preload("res://Scenes/Extra/FloatingQuestion.tscn")
+
 # player data
 var player: KinematicBody
 var player_scene: Resource = preload("res://Scenes/Player/player.tscn")
@@ -24,6 +27,8 @@ var turn_queue: Array = []
 
 func _ready():
 	# setup UI
+	randomize()
+	
 	UI.connect("roll", self, "_on_roll_dice")
 	UI.connect("ti_handled", self, "_on_ti_handled")
 	UI.connect("add_player", self, "_on_add_player")
@@ -283,10 +288,10 @@ func execute_instruction():
 			var tile = lease.get("tile")
 			if get_tile_owners(tile).empty() and player.money >= board_tiles[tile].buy_cost:
 				player_buy_property(player.idx, tile)
+			check_instructions()
 		"rem":
-			var player = instruction.get("player")
 			remove_player(player.idx)
-			remove_child(player)
+			var player = instruction.get("player")
 		_:
 			print("Unkown Command '%s'" % command)
 
@@ -341,3 +346,11 @@ func remove_player(idx: int):
 		players[i].idx -= 1
 	players.remove(idx)
 	UI.update_pd(players)
+	
+# drops question marks from the sky 
+func drop_question_marks():
+	for i in range(12):
+		var floating_question: RigidBody
+		floating_question = question_scene.instance()
+		self.add_child(floating_question)
+			

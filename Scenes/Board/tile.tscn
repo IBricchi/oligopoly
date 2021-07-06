@@ -10,18 +10,18 @@
 
 [sub_resource type="BoxShape" id=1]
 
-[sub_resource type="QuadMesh" id=4]
+[sub_resource type="QuadMesh" id=2]
 size = Vector2( 2, 2 )
 
-[sub_resource type="ViewportTexture" id=6]
+[sub_resource type="ViewportTexture" id=3]
 viewport_path = NodePath("body/number")
 
-[sub_resource type="SpatialMaterial" id=7]
+[sub_resource type="SpatialMaterial" id=4]
 resource_local_to_scene = true
 flags_transparent = true
 flags_unshaded = true
 flags_albedo_tex_force_srgb = true
-albedo_texture = SubResource( 6 )
+albedo_texture = SubResource( 3 )
 
 [sub_resource type="Animation" id=5]
 length = 4.0
@@ -44,7 +44,7 @@ script = ExtResource( 3 )
 
 [node name="body" type="StaticBody" parent="."]
 collision_layer = 2
-collision_mask = 5
+collision_mask = 1048575
 
 [node name="CollisionShape" type="CollisionShape" parent="body"]
 shape = SubResource( 1 )
@@ -84,9 +84,17 @@ valign = 1
 
 [node name="MeshInstance" type="MeshInstance" parent="body"]
 transform = Transform( 1, -8.74228e-08, 3.82137e-15, 0, 4.37114e-08, 1, 8.74228e-08, 1, -4.37114e-08, 0, 1.001, 0 )
-mesh = SubResource( 4 )
-material/0 = SubResource( 7 )
+mesh = SubResource( 2 )
+material/0 = SubResource( 4 )
 
 [node name="anim" type="AnimationPlayer" parent="."]
 anims/idle = SubResource( 5 )
 script = ExtResource( 2 )
+
+[node name="Area" type="Area" parent="."]
+
+[node name="CollisionShape" type="CollisionShape" parent="Area"]
+shape = SubResource( 1 )
+
+[connection signal="input_event" from="body" to="." method="_on_body_input_event"]
+[connection signal="input_event" from="Area" to="." method="_on_Area_input_event"]

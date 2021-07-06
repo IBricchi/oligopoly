@@ -41,6 +41,7 @@ func player_lands(player_idx: int):
 		tt.property:
 			emit_signal("queue_property_action", player_idx, idx)
 		tt.chance:
+			get_node("/root/game").drop_question_marks()
 			print("chance not yet implemented")
 		tt.time_warp:
 			if player_idx == 0:
@@ -54,3 +55,9 @@ func player_passes(player_idx: int):
 			emit_signal("add_money", player_idx, 200)
 		_:
 			pass # only matters for start
+
+### if the tile is clicked
+func _on_Area_input_event(camera, event, click_position, click_normal, shape_idx):
+	if event is InputEventMouseButton:
+		if event.button_index == BUTTON_LEFT and event.pressed: 
+			print("heewoo")
