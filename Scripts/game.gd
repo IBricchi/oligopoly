@@ -160,6 +160,7 @@ func initiate_player(tile_idx: int, time: int, continuity: int, money: int, leas
 	
 	players.push_back(player)
 	add_child(player)
+	UI.update_pd(players)
 	
 	return player
 
@@ -210,6 +211,7 @@ func player_buy_property(idx: int, tile_idx: int):
 		"tile": tile_idx,
 		"ttl": 10
 	})
+	UI.update_pd(players)
 	if idx == 0:
 		handle_turn_instruction()
 
@@ -295,10 +297,10 @@ func execute_instruction():
 			var tile = lease.get("tile")
 			if get_tile_owners(tile).empty() and player.money >= board_tiles[tile].buy_cost:
 				player_buy_property(player.idx, tile)
+			check_instructions()
 		"rem":
 			var player = instruction.get("player")
 			remove_player(player.idx)
-			#remove_child(player)
 		_:
 			print("Unkown Command '%s'" % command)
 
@@ -329,6 +331,7 @@ func ui_update_times():
 
 func change_player_money(idx: int, ammount: int):
 	players[idx].money += ammount
+	UI.update_pd(players)
 	if idx == 0:
 		UI.set_player_money(player.money)
 
@@ -351,6 +354,7 @@ func remove_player(idx: int):
 	for i in range(idx+1, players.size()):
 		players[i].idx -= 1
 	players.remove(idx)
+	UI.update_pd(players)
 	
 # drops question marks from the sky 
 func drop_question_marks():

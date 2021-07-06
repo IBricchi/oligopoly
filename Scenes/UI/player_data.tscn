@@ -1,0 +1,36 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Scripts/UI/player_data.gd" type="Script" id=1]
+[ext_resource path="res://Assets/Fonts/Krona_One/Krona_One.tres" type="DynamicFont" id=2]
+
+[node name="player_data" type="ScrollContainer"]
+margin_right = 40.0
+margin_bottom = 40.0
+size_flags_horizontal = 3
+scroll_vertical_enabled = false
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="list" type="HBoxContainer" parent="."]
+margin_right = 42.0
+margin_bottom = 24.0
+
+[node name="player" type="Label" parent="list"]
+margin_right = 17.0
+margin_bottom = 24.0
+custom_fonts/font = ExtResource( 2 )
+text = "0"
+
+[node name="money" type="Label" parent="list"]
+margin_left = 21.0
+margin_right = 38.0
+margin_bottom = 24.0
+custom_fonts/font = ExtResource( 2 )
+text = "0"
+
+[node name="properties" type="HBoxContainer" parent="list"]
+margin_left = 42.0
+margin_right = 42.0
+margin_bottom = 24.0
