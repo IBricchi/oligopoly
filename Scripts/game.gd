@@ -14,9 +14,6 @@ var question_scene: Resource = preload("res://Scenes/Extra/FloatingQuestion.tscn
 var player: KinematicBody
 var player_scene: Resource = preload("res://Scenes/Player/player.tscn")
 
-# particle variables 
-onready var particle_timer: Node = $"Timer"
-var temp_node: Node
 
 # dice data
 onready var dice: RigidBody = $dice
@@ -127,11 +124,7 @@ func _on_player_landed(idx: int):
 
 func _on_player_vanished(idx: int):
 	if idx != 0:
-		players[idx].emit_particles()
-		players[idx].player_mesh.visible = false
-		temp_node = players[idx]
-		particle_timer.set_wait_time(2) # dont delete node till particle effects are shown
-		particle_timer.start()
+		remove_child(players[idx])  ## this line was originally here but causes an error now sometimes, idk what you want to do with it
 		check_instructions()
 
 # Helpers
@@ -360,6 +353,4 @@ func drop_question_marks():
 		var floating_question: RigidBody
 		floating_question = question_scene.instance()
 		self.add_child(floating_question)
-### necessary or else the particles will be deleted when the node is 
-func _on_Timer_timeout():
-	remove_child(temp_node)
+

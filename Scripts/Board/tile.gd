@@ -42,8 +42,8 @@ func player_lands(player_idx: int):
 			get_node("/root/game").drop_question_marks()
 			print("chance not yet implemented")
 		tt.time_warp:
-			$"/root/game".players[player_idx].emit_particles()
 			if player_idx == 0:
+				$"/root/game".players[0].time_travel_player()
 				emit_signal("queue_time_travel")
 		tt.start:
 			emit_signal("add_money", player_idx, 200)
