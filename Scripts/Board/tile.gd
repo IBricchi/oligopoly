@@ -2,12 +2,9 @@ tool
 extends Spatial
 
 var idx: int
+var upgrade_level: int
 
-# enum for tyle types
-# 0 is a property tile
-# 1 is a chance card
-# 2 is a time travel card
-# 3 is start
+
 enum tt {
 	property,
 	chance,
@@ -31,6 +28,7 @@ var rent_cost: int = 20
 func _ready():
 	idx = int(name)
 	$"body/model".get_child(tile_type).visible = true
+
 
 signal queue_property_action(player_idx, idx)
 signal queue_time_travel
