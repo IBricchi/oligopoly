@@ -4,6 +4,8 @@ onready var anim: AnimationPlayer = $anim
 onready var body: Spatial = $body_cont/body
 onready var smoke_particles: Node = $body_cont/body/ParticleBody/Smoke
 onready var spark_particles: Node = $body_cont/body/ParticleBody/Spark
+onready var fire_particles: Node = $body_cont/body/ParticleBody/Flame
+onready var fire_light: Node = $OmniLight
 onready var player_mesh: Node = $body_cont/body/player
 
 var idx: int
@@ -32,7 +34,10 @@ func _ready():
 	player_mesh.visible = true
 	smoke_particles.one_shot = true
 	spark_particles.one_shot = true
-
+	emit_particles()
+	fire_particles.one_shot = true
+	fire_particles.emitting = false
+	fire_light.visible = false
 	
 func _physics_process(delta):	
 	if not target_queue.empty():
@@ -103,3 +108,11 @@ func vanish():
 func emit_particles():
 	smoke_particles.emitting = true
 	spark_particles.emitting = true
+
+func player_death_particles():
+	player_mesh.visible = false
+	smoke_particles.gravity.y = 1
+	smoke_particles.emitting = true
+	fire_particles.emitting = true
+	fire_light.visible = true
+	
