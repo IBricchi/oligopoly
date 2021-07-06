@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://Scripts/UI/hide_on_click_out.gd" type="Script" id=1]
 [ext_resource path="res://Assets/UI/left_expand.png" type="Texture" id=2]
@@ -8,6 +8,8 @@
 [ext_resource path="res://Scripts/UI.gd" type="Script" id=6]
 [ext_resource path="res://Scripts/UI/show_menu.gd" type="Script" id=7]
 [ext_resource path="res://Scripts/UI/property_popup.gd" type="Script" id=8]
+[ext_resource path="res://Assets/Fonts/Krona_One/mid.tres" type="DynamicFont" id=9]
+[ext_resource path="res://Scenes/UI/player_data.tscn" type="PackedScene" id=10]
 
 [node name="UI" type="MarginContainer"]
 anchor_right = 1.0
@@ -27,6 +29,68 @@ margin_bottom = 670.0
 mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+
+[node name="new_left" type="MarginContainer" parent="areas"]
+visible = false
+margin_right = 407.0
+margin_bottom = 670.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="list" type="VBoxContainer" parent="areas/new_left"]
+margin_right = 407.0
+margin_bottom = 670.0
+
+[node name="turn" type="CenterContainer" parent="areas/new_left/list"]
+margin_right = 407.0
+margin_bottom = 43.0
+
+[node name="Label" type="Label" parent="areas/new_left/list/turn"]
+margin_left = 152.0
+margin_right = 254.0
+margin_bottom = 43.0
+custom_fonts/font = ExtResource( 9 )
+text = "Turn"
+
+[node name="time" type="HBoxContainer" parent="areas/new_left/list"]
+margin_top = 47.0
+margin_right = 407.0
+margin_bottom = 71.0
+size_flags_horizontal = 3
+
+[node name="global" type="CenterContainer" parent="areas/new_left/list/time"]
+margin_right = 201.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+
+[node name="val" type="Label" parent="areas/new_left/list/time/global"]
+margin_left = 47.0
+margin_right = 154.0
+margin_bottom = 24.0
+custom_fonts/font = ExtResource( 3 )
+text = "Global: 1"
+
+[node name="player" type="CenterContainer" parent="areas/new_left/list/time"]
+margin_left = 205.0
+margin_right = 407.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+
+[node name="val" type="Label" parent="areas/new_left/list/time/player"]
+margin_left = 47.0
+margin_right = 154.0
+margin_bottom = 24.0
+custom_fonts/font = ExtResource( 3 )
+text = "Player: 1"
+
+[node name="player_data" type="VBoxContainer" parent="areas/new_left/list"]
+margin_top = 75.0
+margin_right = 407.0
+margin_bottom = 99.0
+
+[node name="HBoxContainer" parent="areas/new_left/list/player_data" instance=ExtResource( 10 )]
+margin_right = 407.0
+margin_bottom = 24.0
 
 [node name="left" type="MarginContainer" parent="areas"]
 margin_right = 407.0
@@ -197,7 +261,7 @@ margin_bottom = 656.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="HBoxContainer" type="MarginContainer" parent="areas"]
+[node name="centre" type="MarginContainer" parent="areas"]
 margin_left = 411.0
 margin_right = 818.0
 margin_bottom = 670.0
