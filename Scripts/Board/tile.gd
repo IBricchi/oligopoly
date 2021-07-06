@@ -17,6 +17,7 @@ enum tt {
 export (tt) var tile_type : int = 0 setget set_tile_type
 func set_tile_type(new_val):
 	tile_type = new_val
+	
 	var target_child = $"body/model".get_child(tile_type)
 	for child in $"body/model".get_children():
 		if child == target_child:

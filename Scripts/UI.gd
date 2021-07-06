@@ -61,3 +61,12 @@ func set_player_money(ammount: int):
 func show_property_popup(tile_idx: int, price: int, can_buy: bool):
 	property_popup.popup(tile_idx, price, can_buy)
 
+onready var player_data_scene: Resource = preload("res://Scenes/UI/player_data.tscn")
+onready var player_data_list: Container = $"areas/new_left/list/player_data"
+func update_pd(players: Array):
+	for child in player_data_list.get_children():
+		player_data_list.remove_child(child)
+	for player in players:
+		var new_player_data: Container = player_data_scene.instance()
+		new_player_data.update_val(player)
+		player_data_list.add_child(new_player_data)
