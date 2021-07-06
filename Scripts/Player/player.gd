@@ -2,6 +2,9 @@ extends KinematicBody
 
 onready var anim: AnimationPlayer = $anim
 onready var body: Spatial = $body_cont/body
+onready var smoke_particles: Node = $body_cont/body/ParticleBody/Smoke
+onready var spark_particles: Node = $body_cont/body/ParticleBody/Spark
+onready var player_mesh: Node = $body_cont/body/player
 
 var idx: int
 var time: int
@@ -26,8 +29,11 @@ signal player_landed(idx)
 signal player_vanished(idx)
 
 func _ready():
-	pass
+	player_mesh.visible = true
+	smoke_particles.one_shot = true
+	spark_particles.one_shot = true
 
+	
 func _physics_process(delta):	
 	if not target_queue.empty():
 		if not target_queue.front().empty():
@@ -93,3 +99,7 @@ func force_land():
 
 func vanish():
 	emit_signal("player_vanished", idx)
+	
+func emit_particles():
+	smoke_particles.emitting = true
+	spark_particles.emitting = true

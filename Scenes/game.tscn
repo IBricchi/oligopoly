@@ -25,3 +25,7 @@ transform = Transform( 0.238008, -0.971263, 0, -0.78495, -0.192352, -0.588943, 0
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource( 6 )
+
+[node name="Timer" type="Timer" parent="."]
+
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

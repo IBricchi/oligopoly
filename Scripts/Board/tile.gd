@@ -44,6 +44,7 @@ func player_lands(player_idx: int):
 			get_node("/root/game").drop_question_marks()
 			print("chance not yet implemented")
 		tt.time_warp:
+			$"/root/game".players[player_idx].emit_particles()
 			if player_idx == 0:
 				emit_signal("queue_time_travel")
 		tt.start:
