@@ -27,6 +27,7 @@ var has_hit_floor: bool = false
 signal player_first_land(idx)
 signal player_landed(idx)
 signal player_vanished(idx)
+signal lease_lost
 
 func _ready():
 	player_mesh.visible = true
@@ -92,6 +93,8 @@ func step():
 			new_leases.push_back(lease)
 		else:
 			print("Player %d lost lease for tile %d" % [idx, lease["tile"]])
+	if leases.size() != new_leases.size():
+		emit_signal("lease_lost")
 	leases = new_leases
 
 func force_land():

@@ -134,6 +134,9 @@ func _on_player_vanished(idx: int):
 		particle_timer.start()
 		check_instructions()
 
+func _on_lease_lost():
+	UI.update_pd(players)
+
 # Helpers
 func initiate_player(tile_idx: int, time: int, continuity: int, money: int, leases: Array) -> KinematicBody:
 	var player: KinematicBody = player_scene.instance()
@@ -157,6 +160,7 @@ func initiate_player(tile_idx: int, time: int, continuity: int, money: int, leas
 	player.connect("player_first_land", self, "_on_player_first_land")
 	player.connect("player_landed", self, "_on_player_landed")
 	player.connect("player_vanished", self, "_on_player_vanished")
+	player.connect("lease_lost", self, "_on_lease_lost")
 	
 	players.push_back(player)
 	add_child(player)
@@ -209,7 +213,7 @@ func player_buy_property(idx: int, tile_idx: int):
 	change_player_money(idx, -tile.buy_cost)
 	player.leases.push_back({
 		"tile": tile_idx,
-		"ttl": 10
+		"ttl": 9
 	})
 	UI.update_pd(players)
 	if idx == 0:
