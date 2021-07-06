@@ -332,8 +332,6 @@ func ui_update_times():
 func change_player_money(idx: int, ammount: int):
 	players[idx].money += ammount
 	UI.update_pd(players)
-	if idx == 0:
-		UI.set_player_money(player.money)
 
 func add_memory():
 	var new_mem: Dictionary = {
