@@ -1,6 +1,6 @@
 extends Button
 
-onready var menu: Container = $"../../menu"
+onready var menu: Container = $"../../../menu"
 
 func _ready():
 	connect("button_up", self, "_on_button_up")
