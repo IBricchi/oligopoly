@@ -3,42 +3,26 @@ extends MarginContainer
 signal roll
 signal ti_handled
 signal buy_property(idx)
-signal add_player(time)
-signal change_time(time)
+signal debug(t, time)
 
 onready var roll: Button = $"areas/right/cont/Control/roll"
-onready var add_player: Button = $"areas/right/menu/list/add_player/add_cont/add"
-onready var change_time: Button = $"areas/right/menu/list/change_time/change_cont/change"
 onready var property_popup: Container = $"property_popup"
+
+onready var d1b: Button = $"areas/right/menu/list/d1/cont/b"
+onready var d2b: Button = $"areas/right/menu/list/d2/cont/b"
+onready var d3b: Button = $"areas/right/menu/list/d3/cont/b"
 
 func _ready():
 	roll.connect("button_up", self, "_on_roll")
 	
-	add_player.connect("button_up", self, "_on_add_player")
-	change_time.connect("button_up", self, "_on_change_time")
+	d1b.connect("button_up", self, "_on_d1")
+	d2b.connect("button_up", self, "_on_d2")
+	d3b.connect("button_up", self, "_on_d3")
 	
 	property_popup.connect("buy_property", self, "_on_buy_property")
 
 func _on_roll():
 	emit_signal("roll")
-
-onready var add_player_val: LineEdit = $"areas/right/menu/list/add_player/num_cont/num"
-func _on_add_player():
-	var time_str = add_player_val.text
-	if time_str.is_valid_integer():
-		var time: int = int(time_str)
-		emit_signal("add_player", time)
-	else:
-		print("Invalid time for adding player!")
-
-onready var change_time_val: LineEdit = $"areas/right/menu/list/change_time/num_cont/num"
-func _on_change_time():
-	var time_str = change_time_val.text
-	if time_str.is_valid_integer():
-		var time: int = int(time_str)
-		emit_signal("change_time", time)
-	else:
-		print("Invalid time for changing time!")
 
 func _on_buy_property(tile_idx: int, do: bool):
 	if do:
@@ -66,3 +50,31 @@ func update_pd(players: Array):
 		var new_player_data: Container = player_data_scene.instance()
 		new_player_data.update_val(player)
 		player_data_list.add_child(new_player_data)
+
+### DEBUG HELPERS
+onready var d1: LineEdit = $"areas/right/menu/list/d1/num_cont/num"
+func _on_d1():
+	var v = d1.text
+	if v.is_valid_integer():
+		var b: int = int(v)
+		emit_signal("debug", 1, b)
+	else:
+		print("Invalid d1")
+
+onready var d2: LineEdit = $"areas/right/menu/list/d2/num_cont/num"
+func _on_d2():
+	var v = d2.text
+	if v.is_valid_integer():
+		var b: int = int(v)
+		emit_signal("debug", 2, b)
+	else:
+		print("Invalid d2!")
+
+onready var d3: LineEdit = $"areas/right/menu/list/d3/num_cont/num"
+func _on_d3():
+	var v = d3.text
+	if v.is_valid_integer():
+		var b: int = int(v)
+		emit_signal("debug", 3, b)
+	else:
+		print("Invalid d3!")

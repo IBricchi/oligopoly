@@ -27,6 +27,7 @@ var has_hit_floor: bool = false
 signal player_first_land(idx)
 signal player_landed(idx)
 signal player_vanished(idx)
+signal player_died(idx)
 signal lease_lost
 
 func _ready():
@@ -106,3 +107,6 @@ func vanish():
 func emit_particles():
 	smoke_particles.emitting = true
 	spark_particles.emitting = true
+
+func kill():
+	emit_signal("player_died", idx)

@@ -36,8 +36,7 @@ func _ready():
 	
 	UI.connect("roll", self, "_on_roll_dice")
 	UI.connect("ti_handled", self, "_on_ti_handled")
-	UI.connect("add_player", self, "_on_add_player")
-	UI.connect("change_time", self, "_on_change_time")
+	UI.connect("debug", self, "_on_debug")
 	UI.connect("buy_property", self, "_on_ui_buy_property")
 	
 	# setup board
@@ -61,14 +60,17 @@ func _on_roll_dice():
 		can_roll = false
 		dice.roll_dice()
 
+func _on_debug(t: int, val: int):
+	match t:
+		1:
+			_on_rolled_value(val)
+		2:
+			change_time(val)
+			handle_turn_instruction()
+		3:
+			change_player_money(0, val)
+
 func _on_ti_handled():
-	handle_turn_instruction()
-
-func _on_add_player(time: int):
-	_on_rolled_value(time)
-
-func _on_change_time(time: int):
-	change_time(time)
 	handle_turn_instruction()
 
 func _on_ui_buy_property(tile_idx: int):
@@ -133,6 +135,13 @@ func _on_player_vanished(idx: int):
 		particle_timer.set_wait_time(2) # dont delete node till particle effects are shown
 		particle_timer.start()
 		check_instructions()
+		remove_player(idx)
+
+func _on_player_died(idx: int):
+	if idx == 0:
+		get_tree().change_scene("res://Scenes/death_screen.tscn")
+	else:
+		remove_player(idx)
 
 func _on_lease_lost():
 	UI.update_pd(players)
@@ -160,6 +169,7 @@ func initiate_player(tile_idx: int, time: int, continuity: int, money: int, leas
 	player.connect("player_first_land", self, "_on_player_first_land")
 	player.connect("player_landed", self, "_on_player_landed")
 	player.connect("player_vanished", self, "_on_player_vanished")
+	player.connect("player_died", self, "_on_player_died")
 	player.connect("lease_lost", self, "_on_lease_lost")
 	
 	players.push_back(player)
@@ -219,6 +229,7 @@ func player_buy_property(idx: int, tile_idx: int):
 	if idx == 0:
 		handle_turn_instruction()
 
+var block_mov: bool = false
 func generate_instructions():
 	# get existing continuities
 	var prev_continuity: Array
@@ -246,6 +257,10 @@ func generate_instructions():
 			})
 	
 	if time_state == null:
+		return
+
+	if block_mov:
+		block_mov = false
 		return
 
 	# move players
@@ -304,7 +319,10 @@ func execute_instruction():
 			check_instructions()
 		"rem":
 			var player = instruction.get("player")
-			remove_player(player.idx)
+			player.vanish()
+		"kill":
+			var player = instruction.get("player")
+			player.kill()
 		_:
 			print("Unkown Command '%s'" % command)
 
@@ -320,12 +338,13 @@ func change_time(time: int):
 	
 	global_time = time
 	ui_update_times()
+	block_mov = true
 	for player in players:
 		if player.idx != 0:
 			instructions.append({
-					"player": player,
-					"command": "rem"
-				})
+				"player": player,
+				"command": "rem"
+			})
 		
 	player.continuity += 1
 
@@ -335,6 +354,14 @@ func ui_update_times():
 
 func change_player_money(idx: int, ammount: int):
 	players[idx].money += ammount
+	if players[idx].money < 0:
+		if idx == 0:
+			player.kill()
+		else:
+			instructions.append({
+				"player": player,
+				"command": "kill"
+			})
 	UI.update_pd(players)
 
 func add_memory():
@@ -352,9 +379,9 @@ func add_memory():
 		memory[global_time] = [new_mem]
 
 func remove_player(idx: int):
-	players[idx].vanish()
 	for i in range(idx+1, players.size()):
 		players[i].idx -= 1
+	remove_child(players[idx])
 	players.remove(idx)
 	UI.update_pd(players)
 	
