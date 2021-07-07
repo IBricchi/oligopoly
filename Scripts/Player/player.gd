@@ -9,6 +9,7 @@ onready var fire_light: Node = $OmniLight
 onready var player_mesh: Node = $body_cont/body/player
 onready var vanish_noise: Node = $AudioStreamPlayer
 onready var death_noise: Node = $AudioStreamPlayer2
+onready var audio_player_lands: Node = $AudioStreamPlayer3D
 
 onready var particletimer : Node = $Timer
 onready var deathtimer : Node = $Timer2
@@ -30,10 +31,12 @@ var first_frame: bool = true
 var velocity: Vector3 = Vector3.ZERO
 var just_frame: bool = false
 var has_hit_floor: bool = false
+var allow_passes: bool = true
+var check_instr: bool = true
 
 signal player_first_land(idx)
 signal player_landed(idx)
-signal player_vanished(idx)
+signal player_vanished(idx, check_instr)
 signal player_died(idx)
 signal lease_lost
 
@@ -58,7 +61,8 @@ func _physics_process(delta):
 			if first_frame:
 				first_frame = false
 				anim.stop()
-				anim.play("step")
+				anim.play("step")	
+				audio_player_lands.play()
 				velocity.y = 2
 				
 			var target: Spatial = target_queue.front().front()
@@ -76,7 +80,7 @@ func _physics_process(delta):
 				
 				if target_queue.front().empty():
 					target.player_lands(idx)
-				else:
+				elif allow_passes:
 					target.player_passes(idx)
 				
 				first_frame = true
@@ -88,6 +92,7 @@ func _physics_process(delta):
 		else:
 			just_frame = false
 			target_queue.pop_front()
+			audio_player_lands.play()
 			emit_signal("player_landed", idx)
 	
 	velocity.y -= gravity * delta
@@ -97,8 +102,9 @@ func _physics_process(delta):
 		has_hit_floor = true
 		emit_signal("player_first_land", idx)
 	
-func queue_target(target: Array):
+func queue_target(target: Array, in_allow_passes: bool = true):
 	target_queue.push_back(target)
+	allow_passes = in_allow_passes
 
 func step():
 	time += 1
@@ -116,13 +122,14 @@ func step():
 func force_land():
 	emit_signal("player_landed", idx)
 
-func vanish():
+func vanish(in_check_instr: bool = true):
 	player_mesh.visible = false
 	smoke_particles.emitting = true
 	spark_particles.emitting = true
 	vanish_noise.play()
 	particletimer.set_wait_time(2)
 	particletimer.start()
+	check_instr = in_check_instr
 
 func time_travel_player():
 	vanish_noise.play()
@@ -141,7 +148,7 @@ func kill():
 	deathtimer.start()
 	
 func _on_Timer_timeout(): ## particletimer
-	emit_signal("player_vanished", idx)
+	emit_signal("player_vanished", idx, check_instr)
 	
 
 func _on_Timer2_timeout(): ### deathtimer

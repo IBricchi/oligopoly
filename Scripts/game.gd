@@ -42,6 +42,7 @@ func _ready():
 	board_tiles = board.request_board_tiles()
 	for tile in board_tiles:
 		tile.connect("queue_property_action", self, "_on_queue_property_action")
+		tile.connect("queue_chance", self, "_on_queue_chance")
 		tile.connect("queue_time_travel", self, "_on_queue_time_travel")
 		tile.connect("add_money", self, "change_player_money")
 	
@@ -75,6 +76,7 @@ func _on_ti_handled():
 
 func _on_ui_buy_property(tile_idx: int):
 	player_buy_property(0, tile_idx)
+	handle_turn_instruction()
 
 # Board connections
 func _on_queue_property_action(idx: int, tile_idx: int):
@@ -97,6 +99,46 @@ func _on_queue_property_action(idx: int, tile_idx: int):
 		if player.money >= board_tiles[tile_idx].buy_cost:
 			instruction["can_buy"] = true
 		turn_queue.push_back(instruction)
+
+func _on_queue_chance():
+	var command: String
+	var val: int
+	
+	drop_question_marks()
+	
+	var rand_action: int = round(rand_range(-.51,3.4))
+	
+	match rand_action:
+		0:
+			command = "advance_time"
+			val = round(rand_range(5,20))
+		1:
+			command = "rewind_time"
+			val = round(rand_range(5,20))
+		2:
+			command = "add_money"
+			val = round(rand_range(1,50)) * 10
+		3:
+			command = "loose_money"
+			val = round(rand_range(1,5000)) * 10
+		4:
+			command = "move_forward"
+			val = round(rand_range(1,10))
+		5:
+			command = "move_back"
+			val = round(rand_range(1,10))
+		_:
+			print("This should be impossible")
+
+	turn_queue.push_back({
+		"command": "chance_prompt",
+		"action": command,
+		"val": val
+	})
+	turn_queue.push_back({
+		"command": command,
+		"val": val
+	})
 
 func _on_queue_time_travel():
 	turn_queue.push_back({
@@ -127,13 +169,15 @@ func _on_player_landed(idx: int):
 	else:
 		check_instructions()
 
-func _on_player_vanished(idx: int):
+func _on_player_vanished(idx: int, check_instr: bool):
 	if idx != 0:
 		remove_player(idx)
-		handle_turn_instruction()
+		if check_instr:
+			check_instructions()
 
 func _on_player_died(idx: int):
 	if idx == 0:
+		Global.turns_on_death = player.time
 		get_tree().change_scene("res://Scenes/death_screen.tscn")
 	else:
 		remove_player(idx)
@@ -174,13 +218,16 @@ func initiate_player(tile_idx: int, time: int, continuity: int, money: int, leas
 	return player
 
 # there is currently no checks for infinite looping
-func generate_path(s_idx: int, e_idx: int) -> Array:
-	if s_idx == (e_idx + 1) % board_tiles.size():
+func generate_path(s_idx: int, e_idx: int, forward: bool = true) -> Array:
+	if (forward and s_idx == (e_idx + 1) % board_tiles.size()) or (!forward and s_idx == (e_idx - 1 + board_tiles.size()) % board_tiles.size()):
 		return []
 	var idx: int = s_idx
 	var path: Array = [board_tiles[idx]]
 	while idx != e_idx:
-		idx = (idx + 1) % board_tiles.size()
+		if forward:
+			idx = (idx + 1) % board_tiles.size()
+		else:
+			idx = (idx - 1 + board_tiles.size()) % board_tiles.size()
 		path.push_back(board_tiles[idx])
 	return path
 
@@ -199,6 +246,38 @@ func handle_turn_instruction():
 					change_time(global_time - round(rand_range(3,10)))
 				else:
 					change_time(global_time + round(rand_range(3,8)))
+				handle_turn_instruction()
+			"chance_prompt":
+				UI.show_chance_popup(instruction.get("action"), instruction.get("val"))
+			"move_forward":
+				var val: int = instruction.get("val")
+				var next: int = (player.tile + 1)%board_tiles.size()
+				var target: int = (player.tile + val)%board_tiles.size()
+				var path: Array = generate_path(next, target)
+				player.tile = target
+				player.queue_target(path)
+			"move_back":
+				var val: int = instruction.get("val")
+				var next: int = (player.tile - 1)%board_tiles.size()
+				var target: int = (player.tile - val + board_tiles.size())%board_tiles.size()
+				var path: Array = generate_path(next, target, false)
+				player.tile = target
+				player.queue_target(path, false)
+			"add_money":
+				var val: int = instruction.get("val")
+				change_player_money(0, val)
+				handle_turn_instruction()
+			"loose_money":
+				var val: int = instruction.get("val")
+				change_player_money(0, -val)
+				handle_turn_instruction()
+			"advance_time":
+				var val: int = instruction.get("val")
+				change_time(global_time + val)
+				handle_turn_instruction()
+			"rewind_time":
+				var val: int = instruction.get("val")
+				change_time(global_time - val)
 				handle_turn_instruction()
 			_:
 				print("Unkown Command '%s'" % command)
@@ -221,8 +300,6 @@ func player_buy_property(idx: int, tile_idx: int):
 		"ttl": 9
 	})
 	UI.update_pd(players)
-	if idx == 0:
-		handle_turn_instruction()
 
 var block_mov: bool = false
 func generate_instructions():
@@ -245,7 +322,7 @@ func generate_instructions():
 	
 	# add new players
 	for continuity in time_continuities.keys():
-		if not prev_continuity.has(continuity) and next_continuities.has(continuity):
+		if (block_mov or not prev_continuity.has(continuity)) and next_continuities.has(continuity):
 			instructions.append({
 				"command": "add",
 				"data": time_continuities.get(continuity)
@@ -257,7 +334,7 @@ func generate_instructions():
 	if block_mov:
 		block_mov = false
 		return
-
+	
 	# move players
 	for player in players:
 		if player.idx != 0:
@@ -315,6 +392,12 @@ func execute_instruction():
 		"rem":
 			var player = instruction.get("player")
 			player.vanish()
+		"batch_rem":
+			var players: Array = instruction.get("players")
+			var param: bool = true
+			for player in players:
+				player.vanish(param)
+				param = false
 		"kill":
 			var player = instruction.get("player")
 			player.kill()
@@ -331,15 +414,16 @@ func check_instructions():
 func change_time(time: int):
 	add_memory()
 	
+	player.time_travel_player()
+	
 	global_time = time
 	ui_update_times()
 	block_mov = true
-	for player in players:
-		if player.idx != 0:
-			instructions.append({
-				"player": player,
-				"command": "rem"
-			})
+	if players.size() > 1:
+		instructions.append({
+			"command": "batch_rem",
+			"players": players.slice(1,players.size()-1),
+		})
 		
 	player.continuity += 1
 
@@ -354,7 +438,7 @@ func change_player_money(idx: int, ammount: int):
 			player.kill()
 		else:
 			instructions.append({
-				"player": player,
+				"player": players[idx],
 				"command": "kill"
 			})
 	UI.update_pd(players)

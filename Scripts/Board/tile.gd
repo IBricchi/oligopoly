@@ -4,9 +4,6 @@ extends Spatial
 var idx: int
 var upgrade_level: int
 
-onready var audio_player_lands: Node = $AudioStreamPlayer3D
-
-
 enum tt {
 	property,
 	chance,
@@ -33,26 +30,24 @@ func _ready():
 
 
 signal queue_property_action(player_idx, idx)
+signal queue_chance
 signal queue_time_travel
 signal add_money(idx, ammount)
 
 func player_lands(player_idx: int):
-	audio_player_lands.play()
 	match tile_type:
 		tt.property:
 			emit_signal("queue_property_action", player_idx, idx)
 		tt.chance:
-			get_node("/root/game").drop_question_marks()
-			print("chance not yet implemented")
+			if player_idx == 0:
+				emit_signal("queue_chance")
 		tt.time_warp:
 			if player_idx == 0:
-				$"/root/game".players[0].time_travel_player()
 				emit_signal("queue_time_travel")
 		tt.start:
 			emit_signal("add_money", player_idx, 200)
 
 func player_passes(player_idx: int):
-	audio_player_lands.play()
 	match tile_type:
 		tt.start:
 			emit_signal("add_money", player_idx, 200)
