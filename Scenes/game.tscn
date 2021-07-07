@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://Scenes/Board/board.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Scripts/game.gd" type="Script" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://Scenes/Extra/dice.tscn" type="PackedScene" id=4]
 [ext_resource path="res://Scripts/Camera.gd" type="Script" id=5]
 [ext_resource path="res://default_env.tres" type="Environment" id=6]
+[ext_resource path="res://Assets/Audio/02 Space Environment_loop.wav" type="AudioStream" id=7]
 
 [node name="game" type="Node"]
 script = ExtResource( 2 )
@@ -25,3 +26,10 @@ transform = Transform( 0.238008, -0.971263, 0, -0.78495, -0.192352, -0.588943, 0
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource( 6 )
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 7 )
+volume_db = -15.0
+autoplay = true
+
+[connection signal="finished" from="AudioStreamPlayer" to="." method="_on_AudioStreamPlayer_finished"]

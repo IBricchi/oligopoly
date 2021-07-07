@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/Meteor_Impactdome_Stereo_02.wav-b3fefa99d5d98330c248f8c9ac82932a.sample"
+
+[deps]
+
+source_file="res://Assets/Audio/Meteor_Impactdome_Stereo_02.wav"
+dest_files=[ "res://.import/Meteor_Impactdome_Stereo_02.wav-b3fefa99d5d98330c248f8c9ac82932a.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0
