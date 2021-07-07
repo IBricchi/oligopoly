@@ -4,7 +4,14 @@ onready var anim: AnimationPlayer = $anim
 onready var body: Spatial = $body_cont/body
 onready var smoke_particles: Node = $body_cont/body/ParticleBody/Smoke
 onready var spark_particles: Node = $body_cont/body/ParticleBody/Spark
+onready var fire_particles: Node = $body_cont/body/ParticleBody/Flame
+onready var fire_light: Node = $OmniLight
 onready var player_mesh: Node = $body_cont/body/player
+onready var vanish_noise: Node = $AudioStreamPlayer
+onready var death_noise: Node = $AudioStreamPlayer2
+
+onready var particletimer : Node = $Timer
+onready var deathtimer : Node = $Timer2
 
 var idx: int
 var time: int
@@ -32,9 +39,17 @@ signal lease_lost
 
 func _ready():
 	player_mesh.visible = true
+	vanish_noise.play()
+	
 	smoke_particles.one_shot = true
 	spark_particles.one_shot = true
-
+	fire_particles.one_shot = true
+	
+	fire_particles.emitting = false
+	fire_light.visible = false
+	
+	smoke_particles.emitting = true
+	spark_particles.emitting = true
 	
 func _physics_process(delta):	
 	if not target_queue.empty():
@@ -102,11 +117,32 @@ func force_land():
 	emit_signal("player_landed", idx)
 
 func vanish():
-	emit_signal("player_vanished", idx)
-	
-func emit_particles():
+	player_mesh.visible = false
 	smoke_particles.emitting = true
 	spark_particles.emitting = true
+	vanish_noise.play()
+	particletimer.set_wait_time(2)
+	particletimer.start()
+
+func time_travel_player():
+	vanish_noise.play()
+	smoke_particles.emitting = true
+	spark_particles.emitting = true
+	
 
 func kill():
-	emit_signal("player_died", idx)
+	player_mesh.visible = false
+	death_noise.play()
+	smoke_particles.gravity.y = 1
+	smoke_particles.emitting = true
+	fire_particles.emitting = true
+	fire_light.visible = true
+	deathtimer.set_wait_time(2)
+	deathtimer.start()
+	
+func _on_Timer_timeout(): ## particletimer
+	emit_signal("player_vanished", idx)
+	
+
+func _on_Timer2_timeout(): ### deathtimer
+  emit_signal("player_died", idx)

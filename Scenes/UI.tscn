@@ -96,6 +96,7 @@ margin_bottom = 24.0
 mouse_filter = 1
 custom_fonts/font = ExtResource( 3 )
 text = "Player: 1"
+align = 2
 
 [node name="leaces" type="MarginContainer" parent="areas/left/list"]
 margin_top = 105.0

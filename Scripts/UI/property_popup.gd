@@ -26,6 +26,7 @@ func popup(idx: int, price: int, can_buy: bool):
 	respond = can_buy
 	if can_buy:
 		prompt.text = "This property is for sale. \n Would you like to buy this property for £%d ?" % price
+		no.text = "No thanks."
 		no.visible = true
 		yes.text = "Yes, buy."
 	else:
