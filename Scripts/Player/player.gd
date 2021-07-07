@@ -32,10 +32,11 @@ var velocity: Vector3 = Vector3.ZERO
 var just_frame: bool = false
 var has_hit_floor: bool = false
 var allow_passes: bool = true
+var check_instr: bool = true
 
 signal player_first_land(idx)
 signal player_landed(idx)
-signal player_vanished(idx)
+signal player_vanished(idx, check_instr)
 signal player_died(idx)
 signal lease_lost
 
@@ -121,13 +122,14 @@ func step():
 func force_land():
 	emit_signal("player_landed", idx)
 
-func vanish():
+func vanish(in_check_instr: bool = true):
 	player_mesh.visible = false
 	smoke_particles.emitting = true
 	spark_particles.emitting = true
 	vanish_noise.play()
 	particletimer.set_wait_time(2)
 	particletimer.start()
+	check_instr = in_check_instr
 
 func time_travel_player():
 	vanish_noise.play()
@@ -146,7 +148,7 @@ func kill():
 	deathtimer.start()
 	
 func _on_Timer_timeout(): ## particletimer
-	emit_signal("player_vanished", idx)
+	emit_signal("player_vanished", idx, check_instr)
 	
 
 func _on_Timer2_timeout(): ### deathtimer

@@ -106,15 +106,15 @@ func _on_queue_chance():
 	
 	drop_question_marks()
 	
-	var rand_action: int = round(rand_range(-.51,5.4))
+	var rand_action: int = round(rand_range(-.51,3.4))
 	
 	match rand_action:
 		0:
-			command = "move_forward"
-			val = round(rand_range(1,10))
+			command = "advance_time"
+			val = round(rand_range(5,20))
 		1:
-			command = "move_back"
-			val = round(rand_range(1,10))
+			command = "rewind_time"
+			val = round(rand_range(5,20))
 		2:
 			command = "add_money"
 			val = round(rand_range(1,50)) * 10
@@ -122,11 +122,11 @@ func _on_queue_chance():
 			command = "loose_money"
 			val = round(rand_range(1,5000)) * 10
 		4:
-			command = "advance_time"
-			val = round(rand_range(5,20))
+			command = "move_forward"
+			val = round(rand_range(1,10))
 		5:
-			command = "rewind_time"
-			val = round(rand_range(5,20))
+			command = "move_back"
+			val = round(rand_range(1,10))
 		_:
 			print("This should be impossible")
 
@@ -169,10 +169,11 @@ func _on_player_landed(idx: int):
 	else:
 		check_instructions()
 
-func _on_player_vanished(idx: int):
+func _on_player_vanished(idx: int, check_instr: bool):
 	if idx != 0:
 		remove_player(idx)
-		handle_turn_instruction()
+		if check_instr:
+			check_instructions()
 
 func _on_player_died(idx: int):
 	if idx == 0:
@@ -321,7 +322,7 @@ func generate_instructions():
 	
 	# add new players
 	for continuity in time_continuities.keys():
-		if not prev_continuity.has(continuity) and next_continuities.has(continuity):
+		if (block_mov or not prev_continuity.has(continuity)) and next_continuities.has(continuity):
 			instructions.append({
 				"command": "add",
 				"data": time_continuities.get(continuity)
@@ -333,7 +334,7 @@ func generate_instructions():
 	if block_mov:
 		block_mov = false
 		return
-
+	
 	# move players
 	for player in players:
 		if player.idx != 0:
@@ -391,6 +392,12 @@ func execute_instruction():
 		"rem":
 			var player = instruction.get("player")
 			player.vanish()
+		"batch_rem":
+			var players: Array = instruction.get("players")
+			var param: bool = true
+			for player in players:
+				player.vanish(param)
+				param = false
 		"kill":
 			var player = instruction.get("player")
 			player.kill()
@@ -412,12 +419,11 @@ func change_time(time: int):
 	global_time = time
 	ui_update_times()
 	block_mov = true
-	for player in players:
-		if player.idx != 0:
-			instructions.append({
-				"player": player,
-				"command": "rem"
-			})
+	if players.size() > 1:
+		instructions.append({
+			"command": "batch_rem",
+			"players": players.slice(1,players.size()-1),
+		})
 		
 	player.continuity += 1
 
