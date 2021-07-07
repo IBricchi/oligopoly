@@ -1,10 +1,12 @@
-[gd_scene load_steps=18 format=2]
+[gd_scene load_steps=20 format=2]
 
 [ext_resource path="res://Assets/Extra/spark_02.png" type="Texture" id=1]
 [ext_resource path="res://Scripts/Player/player.gd" type="Script" id=2]
 [ext_resource path="res://Scenes/Player/player_model.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Assets/Extra/smoke_08.png" type="Texture" id=4]
 [ext_resource path="res://Assets/Extra/flame_03.png" type="Texture" id=5]
+[ext_resource path="res://Assets/Audio/Meteor_ImpactObject_Stereo_01.wav" type="AudioStream" id=6]
+[ext_resource path="res://Assets/Audio/Meteor_Impactdome_Stereo_01.wav" type="AudioStream" id=7]
 
 [sub_resource type="CylinderShape" id=1]
 
@@ -61,11 +63,11 @@ albedo_texture = ExtResource( 1 )
 [sub_resource type="QuadMesh" id=8]
 material = SubResource( 7 )
 
-[sub_resource type="Gradient" id=12]
+[sub_resource type="Gradient" id=9]
 offsets = PoolRealArray( 0, 0.125, 0.178571, 0.25, 0.460714, 0.567857, 0.771429, 0.860714, 0.910714, 1 )
 colors = PoolColorArray( 0, 0, 0, 1, 0.119489, 0.0899582, 0.885742, 1, 0.0139049, 0.0126343, 0.046875, 1, 0.0676347, 0.0335083, 0.953125, 1, 0.929688, 0.861028, 0.130737, 1, 0.344186, 0.32753, 0.776367, 1, 0.87793, 0.590556, 0.0274353, 1, 0.925613, 0.750495, 0.407343, 1, 0.301117, 0.338296, 0.539063, 1, 1, 1, 1, 1 )
 
-[sub_resource type="SpatialMaterial" id=9]
+[sub_resource type="SpatialMaterial" id=10]
 flags_unshaded = true
 vertex_color_use_as_albedo = true
 params_blend_mode = 1
@@ -78,10 +80,10 @@ particles_anim_loop = false
 albedo_color = Color( 0.945098, 0.0784314, 0.0784314, 1 )
 albedo_texture = ExtResource( 5 )
 
-[sub_resource type="QuadMesh" id=10]
-material = SubResource( 9 )
+[sub_resource type="QuadMesh" id=11]
+material = SubResource( 10 )
 
-[sub_resource type="Gradient" id=11]
+[sub_resource type="Gradient" id=12]
 offsets = PoolRealArray( 0, 0.0588235, 0.228758, 0.607143, 0.746429, 0.828571, 0.967857 )
 colors = PoolColorArray( 0, 0, 0, 1, 0.0366211, 0.0580788, 0.585938, 1, 0.835938, 0.56935, 0.153473, 1, 0.871094, 0.238934, 0.173538, 1, 0.828955, 0.828955, 0.828955, 1, 0.963108, 0.963108, 0.963108, 1, 0.21875, 0.206787, 0.206787, 1 )
 
@@ -127,9 +129,9 @@ hue_variation = 1.0
 
 [node name="Spark" type="CPUParticles" parent="body_cont/body/ParticleBody"]
 emitting = false
-amount = 27
+amount = 40
 lifetime = 1.5
-explosiveness = 0.87
+explosiveness = 0.75
 randomness = 0.55
 lifetime_randomness = 0.7
 mesh = SubResource( 8 )
@@ -143,7 +145,7 @@ linear_accel = 13.92
 linear_accel_curve = SubResource( 5 )
 scale_amount = 8.0
 scale_amount_curve = SubResource( 6 )
-color_ramp = SubResource( 12 )
+color_ramp = SubResource( 9 )
 
 [node name="Flame" type="CPUParticles" parent="body_cont/body/ParticleBody"]
 emitting = false
@@ -153,7 +155,7 @@ explosiveness = 0.5
 randomness = 0.55
 lifetime_randomness = 0.16
 draw_order = 2
-mesh = SubResource( 10 )
+mesh = SubResource( 11 )
 emission_shape = 1
 emission_sphere_radius = 0.4
 direction = Vector3( 1, 1, 0 )
@@ -169,7 +171,7 @@ angle_random = 1.0
 scale_amount = 8.0
 scale_amount_random = 0.7
 scale_amount_curve = SubResource( 6 )
-color_ramp = SubResource( 11 )
+color_ramp = SubResource( 12 )
 hue_variation = -0.05
 hue_variation_random = 1.0
 
@@ -184,6 +186,19 @@ omni_attenuation = 0.353554
 [node name="Timer" type="Timer" parent="."]
 
 [node name="Timer2" type="Timer" parent="."]
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource( 7 )
+unit_db = 10.0
+unit_size = 15.0
+max_db = 6.0
+
+[node name="AudioStreamPlayer2" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource( 6 )
+unit_db = 10.0
+unit_size = 15.0
+max_db = 6.0
+pitch_scale = 0.8
 
 [connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]
 [connection signal="timeout" from="Timer2" to="." method="_on_Timer2_timeout"]
