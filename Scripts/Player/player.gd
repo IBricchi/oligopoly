@@ -31,6 +31,7 @@ var first_frame: bool = true
 var velocity: Vector3 = Vector3.ZERO
 var just_frame: bool = false
 var has_hit_floor: bool = false
+var allow_passes: bool = true
 
 signal player_first_land(idx)
 signal player_landed(idx)
@@ -78,7 +79,7 @@ func _physics_process(delta):
 				
 				if target_queue.front().empty():
 					target.player_lands(idx)
-				else:
+				elif allow_passes:
 					target.player_passes(idx)
 				
 				first_frame = true
@@ -100,8 +101,9 @@ func _physics_process(delta):
 		has_hit_floor = true
 		emit_signal("player_first_land", idx)
 	
-func queue_target(target: Array):
+func queue_target(target: Array, in_allow_passes: bool = true):
 	target_queue.push_back(target)
+	allow_passes = in_allow_passes
 
 func step():
 	time += 1

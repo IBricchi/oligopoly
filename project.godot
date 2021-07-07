@@ -24,6 +24,10 @@ config/name="Oligopoly"
 run/main_scene="res://Scenes/title_screen.tscn"
 config/icon="res://icon.png"
 
+[autoload]
+
+Global="*res://Scripts/global.gd"
+
 [display]
 
 window/size/width=1280

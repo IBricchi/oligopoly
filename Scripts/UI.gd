@@ -22,7 +22,7 @@ func _ready():
 	d3b.connect("button_up", self, "_on_d3")
 	
 	property_popup.connect("buy_property", self, "_on_buy_property")
-	property_popup.connect("confirm_chance", self, "_on_confirm_chance")
+	chance_popup.connect("confirm_chance", self, "_on_confirm_chance")
 
 func _on_roll():
 	emit_signal("roll")

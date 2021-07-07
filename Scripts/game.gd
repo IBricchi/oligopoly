@@ -106,17 +106,26 @@ func _on_queue_chance():
 	
 	drop_question_marks()
 	
-	var rand_action: int = round(rand_range(0,2))
+	var rand_action: int = round(rand_range(-.51,5.4))
 	
 	match rand_action:
 		0:
 			command = "move_forward"
 			val = round(rand_range(1,10))
 		1:
+			command = "move_back"
+			val = round(rand_range(1,10))
+		2:
 			command = "add_money"
 			val = round(rand_range(1,50)) * 10
-		2:
+		3:
+			command = "loose_money"
+			val = round(rand_range(1,5000)) * 10
+		4:
 			command = "advance_time"
+			val = round(rand_range(5,20))
+		5:
+			command = "rewind_time"
 			val = round(rand_range(5,20))
 		_:
 			print("This should be impossible")
@@ -167,6 +176,7 @@ func _on_player_vanished(idx: int):
 
 func _on_player_died(idx: int):
 	if idx == 0:
+		Global.turns_on_death = player.time
 		get_tree().change_scene("res://Scenes/death_screen.tscn")
 	else:
 		remove_player(idx)
@@ -207,13 +217,16 @@ func initiate_player(tile_idx: int, time: int, continuity: int, money: int, leas
 	return player
 
 # there is currently no checks for infinite looping
-func generate_path(s_idx: int, e_idx: int) -> Array:
-	if s_idx == (e_idx + 1) % board_tiles.size():
+func generate_path(s_idx: int, e_idx: int, forward: bool = true) -> Array:
+	if (forward and s_idx == (e_idx + 1) % board_tiles.size()) or (!forward and s_idx == (e_idx - 1 + board_tiles.size()) % board_tiles.size()):
 		return []
 	var idx: int = s_idx
 	var path: Array = [board_tiles[idx]]
 	while idx != e_idx:
-		idx = (idx + 1) % board_tiles.size()
+		if forward:
+			idx = (idx + 1) % board_tiles.size()
+		else:
+			idx = (idx - 1 + board_tiles.size()) % board_tiles.size()
 		path.push_back(board_tiles[idx])
 	return path
 
@@ -236,22 +249,34 @@ func handle_turn_instruction():
 			"chance_prompt":
 				UI.show_chance_popup(instruction.get("action"), instruction.get("val"))
 			"move_forward":
-				var action: String = instruction.get("action")
 				var val: int = instruction.get("val")
 				var next: int = (player.tile + 1)%board_tiles.size()
 				var target: int = (player.tile + val)%board_tiles.size()
 				var path: Array = generate_path(next, target)
 				player.tile = target
 				player.queue_target(path)
+			"move_back":
+				var val: int = instruction.get("val")
+				var next: int = (player.tile - 1)%board_tiles.size()
+				var target: int = (player.tile - val + board_tiles.size())%board_tiles.size()
+				var path: Array = generate_path(next, target, false)
+				player.tile = target
+				player.queue_target(path, false)
 			"add_money":
-				var action: String = instruction.get("action")
 				var val: int = instruction.get("val")
 				change_player_money(0, val)
 				handle_turn_instruction()
+			"loose_money":
+				var val: int = instruction.get("val")
+				change_player_money(0, -val)
+				handle_turn_instruction()
 			"advance_time":
-				var action: String = instruction.get("action")
 				var val: int = instruction.get("val")
 				change_time(global_time + val)
+				handle_turn_instruction()
+			"rewind_time":
+				var val: int = instruction.get("val")
+				change_time(global_time - val)
 				handle_turn_instruction()
 			_:
 				print("Unkown Command '%s'" % command)
