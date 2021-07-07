@@ -76,6 +76,7 @@ func _on_ti_handled():
 
 func _on_ui_buy_property(tile_idx: int):
 	player_buy_property(0, tile_idx)
+	handle_turn_instruction()
 
 # Board connections
 func _on_queue_property_action(idx: int, tile_idx: int):
@@ -100,7 +101,7 @@ func _on_queue_property_action(idx: int, tile_idx: int):
 		turn_queue.push_back(instruction)
 
 func _on_queue_chance():
-	var action: String
+	var command: String
 	var val: int
 	
 	drop_question_marks()
@@ -109,20 +110,24 @@ func _on_queue_chance():
 	
 	match rand_action:
 		0:
-			action = "move_forward"
+			command = "move_forward"
 			val = round(rand_range(1,10))
 		1:
-			action = "add_money"
+			command = "add_money"
 			val = round(rand_range(1,50)) * 10
 		2:
-			action = "advance_time"
+			command = "advance_time"
 			val = round(rand_range(5,20))
 		_:
 			print("This should be impossible")
-	
+
 	turn_queue.push_back({
-		"command": "chance",
-		"action": action,
+		"command": "chance_prompt",
+		"action": command,
+		"val": val
+	})
+	turn_queue.push_back({
+		"command": command,
 		"val": val
 	})
 
@@ -228,22 +233,26 @@ func handle_turn_instruction():
 				else:
 					change_time(global_time + round(rand_range(3,8)))
 				handle_turn_instruction()
-			"chance":
+			"chance_prompt":
+				UI.show_chance_popup(instruction.get("action"), instruction.get("val"))
+			"move_forward":
 				var action: String = instruction.get("action")
 				var val: int = instruction.get("val")
-				match action:
-					"move_forward":
-						var next: int = (player.tile + 1)%board_tiles.size()
-						var target: int = (player.tile + val)%board_tiles.size()
-						var path: Array = generate_path(next, target)
-						player.tile = target
-						player.queue_target(path)
-					"add_money":
-						change_player_money(0, val)
-						handle_turn_instruction()
-					"advance_time":
-						change_time(global_time + val)
-						handle_turn_instruction()
+				var next: int = (player.tile + 1)%board_tiles.size()
+				var target: int = (player.tile + val)%board_tiles.size()
+				var path: Array = generate_path(next, target)
+				player.tile = target
+				player.queue_target(path)
+			"add_money":
+				var action: String = instruction.get("action")
+				var val: int = instruction.get("val")
+				change_player_money(0, val)
+				handle_turn_instruction()
+			"advance_time":
+				var action: String = instruction.get("action")
+				var val: int = instruction.get("val")
+				change_time(global_time + val)
+				handle_turn_instruction()
 			_:
 				print("Unkown Command '%s'" % command)
 
@@ -265,8 +274,6 @@ func player_buy_property(idx: int, tile_idx: int):
 		"ttl": 9
 	})
 	UI.update_pd(players)
-	if idx == 0:
-		handle_turn_instruction()
 
 var block_mov: bool = false
 func generate_instructions():
