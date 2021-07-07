@@ -15,3 +15,8 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.136655, 0.215366, 0.0003824
 [node name="CollisionShape" type="CollisionShape" parent="."]
 transform = Transform( 0.2, 0, 0, 0, 1, 0, 0, 0, 0.6, -0.124361, 1.10588, -0.00962344 )
 shape = SubResource( 1 )
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 7.0
+
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]
