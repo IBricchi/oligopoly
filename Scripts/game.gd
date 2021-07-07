@@ -432,7 +432,7 @@ func change_player_money(idx: int, ammount: int):
 			player.kill()
 		else:
 			instructions.append({
-				"player": player,
+				"player": players[idx],
 				"command": "kill"
 			})
 	UI.update_pd(players)
