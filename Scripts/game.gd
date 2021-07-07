@@ -42,6 +42,7 @@ func _ready():
 	board_tiles = board.request_board_tiles()
 	for tile in board_tiles:
 		tile.connect("queue_property_action", self, "_on_queue_property_action")
+		tile.connect("queue_chance", self, "_on_queue_chance")
 		tile.connect("queue_time_travel", self, "_on_queue_time_travel")
 		tile.connect("add_money", self, "change_player_money")
 	
@@ -97,6 +98,33 @@ func _on_queue_property_action(idx: int, tile_idx: int):
 		if player.money >= board_tiles[tile_idx].buy_cost:
 			instruction["can_buy"] = true
 		turn_queue.push_back(instruction)
+
+func _on_queue_chance():
+	var action: String
+	var val: int
+	
+	drop_question_marks()
+	
+	var rand_action: int = round(rand_range(0,2))
+	
+	match rand_action:
+		0:
+			action = "move_forward"
+			val = round(rand_range(1,10))
+		1:
+			action = "add_money"
+			val = round(rand_range(1,50)) * 10
+		2:
+			action = "advance_time"
+			val = round(rand_range(5,20))
+		_:
+			print("This should be impossible")
+	
+	turn_queue.push_back({
+		"command": "chance",
+		"action": action,
+		"val": val
+	})
 
 func _on_queue_time_travel():
 	turn_queue.push_back({
@@ -200,6 +228,22 @@ func handle_turn_instruction():
 				else:
 					change_time(global_time + round(rand_range(3,8)))
 				handle_turn_instruction()
+			"chance":
+				var action: String = instruction.get("action")
+				var val: int = instruction.get("val")
+				match action:
+					"move_forward":
+						var next: int = (player.tile + 1)%board_tiles.size()
+						var target: int = (player.tile + val)%board_tiles.size()
+						var path: Array = generate_path(next, target)
+						player.tile = target
+						player.queue_target(path)
+					"add_money":
+						change_player_money(0, val)
+						handle_turn_instruction()
+					"advance_time":
+						change_time(global_time + val)
+						handle_turn_instruction()
 			_:
 				print("Unkown Command '%s'" % command)
 
@@ -330,6 +374,8 @@ func check_instructions():
 
 func change_time(time: int):
 	add_memory()
+	
+	player.time_travel_player()
 	
 	global_time = time
 	ui_update_times()
