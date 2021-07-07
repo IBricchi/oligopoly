@@ -9,6 +9,7 @@ onready var fire_light: Node = $OmniLight
 onready var player_mesh: Node = $body_cont/body/player
 onready var vanish_noise: Node = $AudioStreamPlayer
 onready var death_noise: Node = $AudioStreamPlayer2
+onready var audio_player_lands: Node = $AudioStreamPlayer3D
 
 onready var particletimer : Node = $Timer
 onready var deathtimer : Node = $Timer2
@@ -58,7 +59,8 @@ func _physics_process(delta):
 			if first_frame:
 				first_frame = false
 				anim.stop()
-				anim.play("step")
+				anim.play("step")	
+				audio_player_lands.play()
 				velocity.y = 2
 				
 			var target: Spatial = target_queue.front().front()
@@ -88,6 +90,7 @@ func _physics_process(delta):
 		else:
 			just_frame = false
 			target_queue.pop_front()
+			audio_player_lands.play()
 			emit_signal("player_landed", idx)
 	
 	velocity.y -= gravity * delta

@@ -4,7 +4,7 @@ onready var play: Button = $"cont/cont/options/play/button"
 onready var mm: Button = $"cont/cont/options/menu/button"
 
 func _ready():
-	mm.connecT("button_down", self, "_on_mm")
+	mm.connect("button_down", self, "_on_mm")
 	play.connect("button_down", self, "_on_play")
 
 func _on_mm():

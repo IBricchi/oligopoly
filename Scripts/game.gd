@@ -130,6 +130,7 @@ func _on_player_landed(idx: int):
 func _on_player_vanished(idx: int):
 	if idx != 0:
 		remove_player(idx)
+		handle_turn_instruction()
 
 func _on_player_died(idx: int):
 	if idx == 0:
