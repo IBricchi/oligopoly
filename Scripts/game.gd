@@ -4,7 +4,7 @@ extends Node
 onready var UI: MarginContainer = $UI
 
 # board data
-onready var board: Spatial = $board
+onready var board: Spatial = $board1
 var board_tiles: Array
 
 # silly question mark
@@ -22,6 +22,7 @@ onready var dice: RigidBody = $dice
 var memory: Dictionary = {}
 var global_time: int = 1
 var players: Array = []
+var player_colours: Array = [] ## Array of Vector3s containing the colors (order doesnt matter)
 
 # turn data
 var turn_queue: Array = []

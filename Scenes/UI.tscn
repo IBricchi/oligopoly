@@ -99,20 +99,20 @@ custom_fonts/font = ExtResource( 3 )
 text = "Player: 1"
 align = 2
 
-[node name="leaces" type="MarginContainer" parent="areas/left/list"]
+[node name="leases" type="MarginContainer" parent="areas/left/list"]
 margin_top = 105.0
 margin_right = 327.0
 margin_bottom = 158.0
 mouse_filter = 1
 custom_constants/margin_top = 10
 
-[node name="Label" type="Label" parent="areas/left/list/leaces"]
+[node name="Label" type="Label" parent="areas/left/list/leases"]
 margin_top = 10.0
 margin_right = 327.0
 margin_bottom = 53.0
 mouse_filter = 1
 custom_fonts/font = ExtResource( 9 )
-text = "Leaces"
+text = "Leases"
 
 [node name="mar" type="MarginContainer" parent="areas/left/list"]
 margin_top = 162.0
