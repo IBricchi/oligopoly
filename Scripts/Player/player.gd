@@ -146,7 +146,10 @@ func kill():
 	fire_light.visible = true
 	deathtimer.set_wait_time(2)
 	deathtimer.start()
-	
+
+func change_money(ammount):
+	money += ammount
+
 func _on_Timer_timeout(): ## particletimer
 	emit_signal("player_vanished", idx, check_instr)
 	

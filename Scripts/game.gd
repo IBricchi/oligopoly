@@ -4,7 +4,7 @@ extends Node
 onready var UI: MarginContainer = $UI
 
 # board data
-onready var board: Spatial = $board1
+onready var board: Spatial = $board
 var board_tiles: Array
 
 # silly question mark
@@ -45,6 +45,7 @@ func _ready():
 	board_tiles = board.request_board_tiles()
 	for tile in board_tiles:
 		tile.connect("queue_property_action", self, "_on_queue_property_action")
+		tile.connect("drop_qm", self, "_on_drop_qm")
 		tile.connect("queue_chance", self, "_on_queue_chance")
 		tile.connect("queue_time_travel", self, "_on_queue_time_travel")
 		tile.connect("add_money", self, "change_player_money")
@@ -104,21 +105,23 @@ func _on_queue_property_action(idx: int, tile_idx: int):
 			instruction["can_buy"] = true
 		turn_queue.push_back(instruction)
 
+func _on_drop_qm():
+	drop_question_marks()
+
 func _on_queue_chance():
 	var command: String
 	var val: int
 	
-	drop_question_marks()
 	
-	var rand_action: int = round(rand_range(5 -.4,5 +.4))
+	var rand_action: int = round(rand_range(0 -.4,5 +.4))
 	
 	match rand_action:
 		0:
 			command = "advance_time"
-			val = round(rand_range(5,20))
+			val = round(rand_range(3,10))
 		1:
 			command = "rewind_time"
-			val = round(rand_range(5,20))
+			val = round(rand_range(3,10))
 		2:
 			command = "add_money"
 			val = round(rand_range(1,50)) * 10
@@ -128,7 +131,7 @@ func _on_queue_chance():
 			})
 		3:
 			command = "loose_money"
-			val = round(rand_range(1,5000)) * 10
+			val = round(rand_range(1,50)) * 10
 			chance_data.push_back({
 				"command": command,
 				"val": val
@@ -267,10 +270,17 @@ func handle_turn_instruction():
 			"property_prompt":
 				UI.show_property_popup(instruction.get("tile"), instruction.get("price"), instruction.get("can_buy"))
 			"time_travel":
-				if randf() < 0.7:
-					change_time(global_time - round(rand_range(3,10)))
-				else: 
-					change_time(global_time + round(rand_range(3,8)))
+				var tr: int = min(5 + player.time%10, 10)
+				var next_time: int = 0
+				
+				if global_time < -tr+3:
+					next_time = global_time - rand_range(2,5)
+				elif global_time < tr + 3:
+					next_time = rand_range(-tr, global_time - 3)
+				else:
+					next_time = rand_range(-tr, tr)
+				
+				change_time(next_time)
 				handle_turn_instruction()
 			"chance_prompt":
 				UI.show_chance_popup(instruction.get("action"), instruction.get("val"))
@@ -500,7 +510,7 @@ func ui_update_times():
 	UI.set_player_time(player.time)
 
 func change_player_money(idx: int, ammount: int):
-	players[idx].money += ammount
+	players[idx].change_money(ammount)
 	if players[idx].money < 0:
 		players[idx].kill()
 		if idx != 0:
