@@ -149,6 +149,9 @@ func _on_queue_chance():
 				"command": command,
 				"val": val
 			})
+    6:
+			command = "switch_colour"
+			val = 0
 		_:
 			print("This should be impossible")
 
@@ -315,6 +318,8 @@ func handle_turn_instruction():
 				var val: int = instruction.get("val")
 				change_time(global_time - val)
 				handle_turn_instruction()
+			"switch_colour":
+				players[0].switch_color()
 			_:
 				print("Unkown Command '%s'" % command)
 

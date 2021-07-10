@@ -17,23 +17,26 @@ func popup(command: String, val: int):
 	var accept: String
 	match command:
 		"move_forward":
-			message = "You get shoved forward %d tiles." % val
+			message = "A solar storm rages.\n You get shoved forward %d tiles." % val
 			accept = "Ummf"
 		"move_back":
-			message = "You slipped on a bannana and fell back %d tiles." % val
-			accept = "Ahhhh"
+			message = "You slipped on a banana peel and fell back %d tiles. \n\n How did that thing even get here?" % val
+			accept = "Ahhhh ..."
 		"add_money":
-			message = "A time rip opens and out pops £%d." % val
+			message = "Out of nowhere a time rip opens and out pops £%d. \n You decide not to question this." % val
 			accept = "Gimme that cash!"
 		"loose_money":
-			message = "You trip and drop £%d in a time rip." % val
-			accept = "No my money!"
+			message = "You trip and drop £%d in a time rip. \n You can do nothing but stare as your cash floats into the abyss." % val
+			accept = "Oh no my money!"
 		"advance_time":
-			message = "There was some residual time energy from your last hop and you move %d turns into the future" % val
+			message = "There was some residual time energy from your last hop and you move %d turns into the future." % val
 			accept = "ZOOOOP"
 		"rewind_time":
-			message = "You slipped on a time bannada and fell back %d moves in the past." % val
-			accept = "Ahhhh (but in time)"
+			message = "You slipped on a time banana and fell back %d moves in the past." % val
+			accept = "Ahhhh ... (but in time)"
+		"switch_colour":
+			message = "You feel a very strange sensation ... \n You glance down and realize your skin tone has completely changed!"
+			accept = "Do I even have skin ?"
 	prompt.text = message
 	yes.text = accept
 	visible = true

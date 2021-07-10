@@ -170,6 +170,9 @@ func _on_Timer_timeout(): ## particletimer
 func _on_Timer2_timeout(): ### deathtimer
   emit_signal("player_died", idx)
 
+func switch_color():
+	player_mesh.switch_color()
 
 func _on_money_text_timer_timeout():
 	money_text.visible = false
+

@@ -10,7 +10,6 @@ gravity_scale = 0.45
 script = ExtResource( 2 )
 
 [node name="question" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.136655, 0.215366, 0.000382423 )
 
 [node name="CollisionShape" type="CollisionShape" parent="."]
 transform = Transform( 0.2, 0, 0, 0, 1, 0, 0, 0, 0.6, -0.124361, 1.10588, -0.00962344 )
