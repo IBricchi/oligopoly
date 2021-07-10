@@ -196,12 +196,16 @@ func _on_player_vanished(idx: int, check_instr: bool):
 		if check_instr:
 			check_instructions()
 
+var death_can_remove: Array = []
 func _on_player_died(idx: int):
 	if idx == 0:
 		Global.turns_on_death = player.time
 		get_tree().change_scene("res://Scenes/death_screen.tscn")
-	else:
+	elif death_can_remove.has(idx):
+		death_can_remove.erase(idx)
 		remove_player(idx)
+	else:
+		death_can_remove.push_back(idx)
 
 func _on_lease_lost():
 	UI.update_pd(players)
@@ -434,7 +438,11 @@ func execute_instruction():
 				param = false
 		"kill":
 			var player = instruction.get("player")
-			player.kill()
+			if death_can_remove.has(player.idx):
+				remove_player(player.idx)
+				death_can_remove.erase(player.idx)
+			else:
+				death_can_remove.push_back(player.idx)
 		"move_forward":
 			var player = instruction.get("player")
 			var val: int = instruction.get("val")
@@ -494,9 +502,8 @@ func ui_update_times():
 func change_player_money(idx: int, ammount: int):
 	players[idx].money += ammount
 	if players[idx].money < 0:
-		if idx == 0:
-			player.kill()
-		else:
+		players[idx].kill()
+		if idx != 0:
 			instructions.append({
 				"player": players[idx],
 				"command": "kill"
