@@ -23,6 +23,8 @@ var memory: Dictionary = {}
 var global_time: int = 1
 var players: Array = []
 var player_colours: Array = [] ## Array of Vector3s containing the colors (order doesnt matter)
+var chance_tile_overide = null
+var chance_data: Array = []
 
 # turn data
 var turn_queue: Array = []
@@ -32,7 +34,7 @@ onready var audio : Node = $AudioStreamPlayer
 
 func _ready():
 	# setup UI
-	randomize()
+#	randomize()
 	
 	UI.connect("roll", self, "_on_roll_dice")
 	UI.connect("ti_handled", self, "_on_ti_handled")
@@ -67,6 +69,7 @@ func _on_debug(t: int, val: int):
 		1:
 			_on_rolled_value(val)
 		2:
+			global_time += 1
 			change_time(val)
 			handle_turn_instruction()
 		3:
@@ -107,7 +110,7 @@ func _on_queue_chance():
 	
 	drop_question_marks()
 	
-	var rand_action: int = round(rand_range(-.51,3.4))
+	var rand_action: int = round(rand_range(5 -.4,5 +.4))
 	
 	match rand_action:
 		0:
@@ -119,15 +122,31 @@ func _on_queue_chance():
 		2:
 			command = "add_money"
 			val = round(rand_range(1,50)) * 10
+			chance_data.push_back({
+				"command": command,
+				"val": val
+			})
 		3:
 			command = "loose_money"
 			val = round(rand_range(1,5000)) * 10
+			chance_data.push_back({
+				"command": command,
+				"val": val
+			})
 		4:
 			command = "move_forward"
 			val = round(rand_range(1,10))
+			chance_data.push_back({
+				"command": command,
+				"val": val
+			})
 		5:
 			command = "move_back"
 			val = round(rand_range(1,10))
+			chance_data.push_back({
+				"command": command,
+				"val": val
+			})
 		_:
 			print("This should be impossible")
 
@@ -163,8 +182,9 @@ func _on_player_first_land(idx: int):
 func _on_player_landed(idx: int):
 	players[idx].step()	
 	if idx == 0:
-		global_time += 1
-		ui_update_times()	
+		if chance_tile_overide == null:
+			global_time += 1
+			ui_update_times()	
 		
 		handle_turn_instruction()
 	else:
@@ -176,12 +196,16 @@ func _on_player_vanished(idx: int, check_instr: bool):
 		if check_instr:
 			check_instructions()
 
+var death_can_remove: Array = []
 func _on_player_died(idx: int):
 	if idx == 0:
 		Global.turns_on_death = player.time
 		get_tree().change_scene("res://Scenes/death_screen.tscn")
-	else:
+	elif death_can_remove.has(idx):
+		death_can_remove.erase(idx)
 		remove_player(idx)
+	else:
+		death_can_remove.push_back(idx)
 
 func _on_lease_lost():
 	UI.update_pd(players)
@@ -245,12 +269,13 @@ func handle_turn_instruction():
 			"time_travel":
 				if randf() < 0.7:
 					change_time(global_time - round(rand_range(3,10)))
-				else:
+				else: 
 					change_time(global_time + round(rand_range(3,8)))
 				handle_turn_instruction()
 			"chance_prompt":
 				UI.show_chance_popup(instruction.get("action"), instruction.get("val"))
 			"move_forward":
+				chance_tile_overide = player.tile
 				var val: int = instruction.get("val")
 				var next: int = (player.tile + 1)%board_tiles.size()
 				var target: int = (player.tile + val)%board_tiles.size()
@@ -258,6 +283,7 @@ func handle_turn_instruction():
 				player.tile = target
 				player.queue_target(path)
 			"move_back":
+				chance_tile_overide = player.tile
 				var val: int = instruction.get("val")
 				var next: int = (player.tile - 1)%board_tiles.size()
 				var target: int = (player.tile - val + board_tiles.size())%board_tiles.size()
@@ -343,13 +369,23 @@ func generate_instructions():
 			for player_data in time_state:
 				if player.continuity == player_data.get("continuity"):
 					data = player_data
+#					break
 			if data.empty():
 				continue
+			# move players
 			instructions.append({
 				"player": player,
 				"command": "mov",
 				"data": data
 			})
+			# check chance properties
+			for chance_command in data.get("chance_commands"):
+				instructions.append({
+					"player": player,
+					"command": chance_command.get("command"),
+					"val": chance_command.get("val")
+				})
+			# find any properties that need to be bought
 			for lease in data.get("leases"):
 				var new_lease: bool = true
 				for owned_lease in player.leases:
@@ -361,7 +397,8 @@ func generate_instructions():
 						"player": player,
 						"command": "buy_property",
 						"lease": lease
-					})
+				})
+			# find if player needs to be removed
 			if not next_continuities.has(player.continuity):
 				instructions.append({
 					"player": player,
@@ -401,7 +438,37 @@ func execute_instruction():
 				param = false
 		"kill":
 			var player = instruction.get("player")
-			player.kill()
+			if death_can_remove.has(player.idx):
+				remove_player(player.idx)
+				death_can_remove.erase(player.idx)
+			else:
+				death_can_remove.push_back(player.idx)
+		"move_forward":
+			var player = instruction.get("player")
+			var val: int = instruction.get("val")
+			var next: int = (player.tile + 1)%board_tiles.size()
+			var target: int = (player.tile + val)%board_tiles.size()
+			var path: Array = generate_path(next, target)
+			player.tile = target
+			player.queue_target(path)
+		"move_back":
+			var player = instruction.get("player")
+			var val: int = instruction.get("val")
+			var next: int = (player.tile - 1)%board_tiles.size()
+			var target: int = (player.tile - val + board_tiles.size())%board_tiles.size()
+			var path: Array = generate_path(next, target, false)
+			player.tile = target
+			player.queue_target(path, false)
+		"add_money":
+			var player = instruction.get("player")
+			var val: int = instruction.get("val")
+			change_player_money(player.idx, val)
+			execute_instruction()
+		"loose_money":
+			var player = instruction.get("player")
+			var val: int = instruction.get("val")
+			change_player_money(player.idx, -val)
+			execute_instruction()
 		_:
 			print("Unkown Command '%s'" % command)
 
@@ -435,9 +502,8 @@ func ui_update_times():
 func change_player_money(idx: int, ammount: int):
 	players[idx].money += ammount
 	if players[idx].money < 0:
-		if idx == 0:
-			player.kill()
-		else:
+		players[idx].kill()
+		if idx != 0:
 			instructions.append({
 				"player": players[idx],
 				"command": "kill"
@@ -445,13 +511,21 @@ func change_player_money(idx: int, ammount: int):
 	UI.update_pd(players)
 
 func add_memory():
+	var tile = player.tile
+	if chance_tile_overide != null:
+		tile = chance_tile_overide
+		chance_tile_overide = null
+	
 	var new_mem: Dictionary = {
 		"player_time": player.time,
-		"tile": player.tile,
+		"tile": tile,
 		"continuity": player.continuity,
 		"money": player.money,
-		"leases": player.leases.duplicate(true)
+		"leases": player.leases.duplicate(true),
+		"chance_commands": chance_data.duplicate(true)
 	}
+	
+	chance_data = []
 	
 	if memory.has(global_time):
 		memory[global_time].push_back(new_mem)
