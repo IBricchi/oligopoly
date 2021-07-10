@@ -15,7 +15,7 @@ const lease_label: Resource = preload("res://Scenes/UI/lease_label.tscn")
 
 func update_val(p):
 	player = $"list/player"
-	player.text = "|Player: %d £%d|" % [p.idx, p.money]
+	player.text = "|Player: %d €%d|" % [p.idx, p.money]
 	properties = $"list/properties"
 	for child in properties.get_children():
 		properties.remove_child(child)
