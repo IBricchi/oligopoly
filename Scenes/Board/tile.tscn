@@ -43,6 +43,7 @@ tracks/0/keys = {
 script = ExtResource( 3 )
 
 [node name="body" type="StaticBody" parent="."]
+transform = Transform( 0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 0, 0, 0 )
 collision_layer = 2
 collision_mask = 1048575
 
@@ -78,12 +79,13 @@ margin_top = 18.0
 margin_right = 73.0
 margin_bottom = 81.0
 custom_fonts/font = ExtResource( 7 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "0"
 align = 1
 valign = 1
 
 [node name="MeshInstance" type="MeshInstance" parent="body"]
-transform = Transform( 1, -8.74228e-08, 3.82137e-15, 0, 4.37114e-08, 1, 8.74228e-08, 1, -4.37114e-08, 0, 1.001, 0 )
+transform = Transform( 1, -1.50996e-07, 6.60024e-15, 0, 4.37114e-08, 1, 1.50996e-07, 1, -4.37114e-08, 0, 1.001, 0 )
 mesh = SubResource( 2 )
 material/0 = SubResource( 4 )
 

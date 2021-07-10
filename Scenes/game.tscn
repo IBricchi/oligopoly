@@ -12,11 +12,14 @@
 script = ExtResource( 2 )
 
 [node name="Camera" type="Camera" parent="."]
-transform = Transform( 0.99965, -0.0132369, 0.0229269, 0, 0.866025, 0.5, -0.0264737, -0.499825, 0.865722, -0.453618, 12.0335, 13.2126 )
+transform = Transform( 0.997256, 0.0203204, 0.071184, -0.0665846, 0.666445, 0.742575, -0.0323508, -0.745277, 0.66597, -1.9613, 8.7363, 9.1885 )
+h_offset = -3.0
+v_offset = -2.0
 current = true
+size = 0.1
 script = ExtResource( 5 )
 
-[node name="board1" parent="." instance=ExtResource( 1 )]
+[node name="board" parent="." instance=ExtResource( 1 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0 )
 
 [node name="dice" parent="." instance=ExtResource( 4 )]

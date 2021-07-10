@@ -22,7 +22,7 @@ func set_tile_type(new_val):
 			child.visible = false
 
 var buy_cost: int = 100
-var rent_cost: int = 200
+var rent_cost: int = 50
 
 func _ready():
 	idx = int(name)
@@ -30,6 +30,7 @@ func _ready():
 
 
 signal queue_property_action(player_idx, idx)
+signal drop_qm
 signal queue_chance
 signal queue_time_travel
 signal add_money(idx, ammount)
@@ -39,6 +40,7 @@ func player_lands(player_idx: int):
 		tt.property:
 			emit_signal("queue_property_action", player_idx, idx)
 		tt.chance:
+			emit_signal("drop_qm")
 			if player_idx == 0:
 				emit_signal("queue_chance")
 		tt.time_warp:
