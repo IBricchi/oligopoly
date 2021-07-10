@@ -52,7 +52,6 @@ func _ready():
 	
 	# setup player
 	player = initiate_player(0, global_time, 0, 500, [])
-	change_player_money(0,0)
 	
 	# setup dice
 	dice.connect("rolled_value", self, "_on_rolled_value")

@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=2]
+[gd_scene load_steps=25 format=2]
 
 [ext_resource path="res://Assets/Extra/spark_02.png" type="Texture" id=1]
 [ext_resource path="res://Scripts/Player/player.gd" type="Script" id=2]
@@ -8,6 +8,7 @@
 [ext_resource path="res://Assets/Audio/Meteor_ImpactObject_Stereo_01.wav" type="AudioStream" id=6]
 [ext_resource path="res://Assets/Audio/Meteor_Impactdome_Stereo_01.wav" type="AudioStream" id=7]
 [ext_resource path="res://Assets/Audio/Pawn Lands Effect.wav" type="AudioStream" id=8]
+[ext_resource path="res://Assets/Player/money_font.tres" type="DynamicFont" id=9]
 
 [sub_resource type="CylinderShape" id=1]
 
@@ -87,6 +88,19 @@ material = SubResource( 10 )
 [sub_resource type="Gradient" id=12]
 offsets = PoolRealArray( 0, 0.0588235, 0.228758, 0.607143, 0.746429, 0.828571, 0.967857 )
 colors = PoolColorArray( 0, 0, 0, 1, 0.0366211, 0.0580788, 0.585938, 1, 0.835938, 0.56935, 0.153473, 1, 0.871094, 0.238934, 0.173538, 1, 0.828955, 0.828955, 0.828955, 1, 0.963108, 0.963108, 0.963108, 1, 0.21875, 0.206787, 0.206787, 1 )
+
+[sub_resource type="QuadMesh" id=13]
+size = Vector2( 6, 2 )
+
+[sub_resource type="ViewportTexture" id=16]
+viewport_path = NodePath("body_cont/body/number")
+
+[sub_resource type="SpatialMaterial" id=15]
+resource_local_to_scene = true
+flags_transparent = true
+flags_unshaded = true
+flags_albedo_tex_force_srgb = true
+albedo_texture = SubResource( 16 )
 
 [node name="player" type="KinematicBody"]
 collision_mask = 2
@@ -176,6 +190,34 @@ color_ramp = SubResource( 12 )
 hue_variation = -0.05
 hue_variation_random = 1.0
 
+[node name="number" type="Viewport" parent="body_cont/body"]
+size = Vector2( 300, 100 )
+transparent_bg = true
+usage = 0
+render_target_update_mode = 3
+
+[node name="cont" type="CenterContainer" parent="body_cont/body/number"]
+margin_right = 300.0
+margin_bottom = 100.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="val" type="Label" parent="body_cont/body/number/cont"]
+margin_left = 72.0
+margin_right = 228.0
+margin_bottom = 103.0
+custom_fonts/font = ExtResource( 9 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+text = "1000"
+align = 1
+valign = 1
+
+[node name="money" type="MeshInstance" parent="body_cont/body"]
+transform = Transform( -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 3, 0 )
+visible = false
+mesh = SubResource( 13 )
+material/0 = SubResource( 15 )
+
 [node name="OmniLight" type="OmniLight" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.77207, 0 )
 light_energy = 7.69
@@ -187,6 +229,8 @@ omni_attenuation = 0.353554
 [node name="Timer" type="Timer" parent="."]
 
 [node name="Timer2" type="Timer" parent="."]
+
+[node name="money_text_timer" type="Timer" parent="."]
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource( 7 )
@@ -211,3 +255,4 @@ pitch_scale = 0.7
 
 [connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]
 [connection signal="timeout" from="Timer2" to="." method="_on_Timer2_timeout"]
+[connection signal="timeout" from="money_text_timer" to="." method="_on_money_text_timer_timeout"]
