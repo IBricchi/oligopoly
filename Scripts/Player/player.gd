@@ -153,3 +153,6 @@ func _on_Timer_timeout(): ## particletimer
 
 func _on_Timer2_timeout(): ### deathtimer
   emit_signal("player_died", idx)
+
+func switch_color():
+	player_mesh.switch_color()

@@ -128,6 +128,9 @@ func _on_queue_chance():
 		5:
 			command = "move_back"
 			val = round(rand_range(1,10))
+		6:  
+			command = "switch_colour"
+			val = 0
 		_:
 			print("This should be impossible")
 
@@ -243,7 +246,7 @@ func handle_turn_instruction():
 			"property_prompt":
 				UI.show_property_popup(instruction.get("tile"), instruction.get("price"), instruction.get("can_buy"))
 			"time_travel":
-				if randf() < 0.7:
+				if randf() < 1:
 					change_time(global_time - round(rand_range(3,10)))
 				else:
 					change_time(global_time + round(rand_range(3,8)))
@@ -280,6 +283,8 @@ func handle_turn_instruction():
 				var val: int = instruction.get("val")
 				change_time(global_time - val)
 				handle_turn_instruction()
+			"switch_colour":
+				players[0].switch_color()
 			_:
 				print("Unkown Command '%s'" % command)
 

@@ -10,9 +10,14 @@ extends RigidBody
 func _ready():
 	visible = true
 	var phi = rand_range(0,2*PI)
-	translation = Vector3(rand_range(0,17)*cos(phi), rand_range(7,12), rand_range(0,17)*sin(phi))
+	translation = Vector3(rand_range(10,14)*cos(phi), rand_range(7,12), rand_range(10,14)*sin(phi))
 	angular_velocity = Vector3(rand_range(0,2), rand_range(10,20), rand_range(0,2))
 	$Timer.start()
+	
+	# sadly the mesh is fucked
+	#var material = $"question/MeshInstance".get_surface_material(0).duplicate()
+	#material.albedo_color = Color(rand_range(0,200)/200, rand_range(0,200)/200, rand_range(0,200)/200)
+	#$question.set_surface_material(0, material)
 
 
 
