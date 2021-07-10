@@ -510,7 +510,7 @@ func ui_update_times():
 	UI.set_player_time(player.time)
 
 func change_player_money(idx: int, ammount: int):
-	players[idx].money += ammount
+	players[idx].change_money(ammount)
 	if players[idx].money < 0:
 		players[idx].kill()
 		if idx != 0:
