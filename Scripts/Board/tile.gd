@@ -22,7 +22,7 @@ func set_tile_type(new_val):
 			child.visible = false
 
 var buy_cost: int = 100
-var rent_cost: int = 200
+var rent_cost: int = 50
 
 func _ready():
 	idx = int(name)
