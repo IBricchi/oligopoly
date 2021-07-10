@@ -45,6 +45,7 @@ func _ready():
 	board_tiles = board.request_board_tiles()
 	for tile in board_tiles:
 		tile.connect("queue_property_action", self, "_on_queue_property_action")
+		tile.connect("drop_qm", self, "_on_drop_qm")
 		tile.connect("queue_chance", self, "_on_queue_chance")
 		tile.connect("queue_time_travel", self, "_on_queue_time_travel")
 		tile.connect("add_money", self, "change_player_money")
@@ -104,11 +105,13 @@ func _on_queue_property_action(idx: int, tile_idx: int):
 			instruction["can_buy"] = true
 		turn_queue.push_back(instruction)
 
+func _on_drop_qm():
+	drop_question_marks()
+
 func _on_queue_chance():
 	var command: String
 	var val: int
 	
-	drop_question_marks()
 	
 	var rand_action: int = round(rand_range(0 -.4,5 +.4))
 	
