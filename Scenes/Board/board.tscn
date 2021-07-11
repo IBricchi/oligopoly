@@ -43,11 +43,10 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, -0.00610773, -4 )
 
 [node name="9" parent="tiles" instance=ExtResource( 1 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 3, -0.00610773, -4 )
-tile_type = 2
 
 [node name="10" parent="tiles" instance=ExtResource( 1 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 3, -0.00610773, -6 )
-tile_type = 1
+tile_type = 2
 
 [node name="11" parent="tiles" instance=ExtResource( 1 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5, -0.00610773, -6 )
@@ -61,7 +60,6 @@ tile_type = 1
 
 [node name="14" parent="tiles" instance=ExtResource( 1 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 7, -0.00610773, -2 )
-tile_type = 2
 
 [node name="15" parent="tiles" instance=ExtResource( 1 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 7, -0.00610773, 0 )
@@ -71,6 +69,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 7, -0.00610773, 2 )
 
 [node name="17" parent="tiles" instance=ExtResource( 1 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5, -0.00610773, 2 )
+tile_type = 2
 
 [node name="18" parent="tiles" instance=ExtResource( 1 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5, -0.00610773, 4 )
@@ -78,7 +77,6 @@ tile_type = 1
 
 [node name="19" parent="tiles" instance=ExtResource( 1 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5, -0.00610773, 6 )
-tile_type = 2
 
 [node name="20" parent="tiles" instance=ExtResource( 1 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 3, -0.00610773, 6 )
@@ -88,7 +86,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, -0.00610773, 6 )
 
 [node name="22" parent="tiles" instance=ExtResource( 1 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, -0.00610773, 4 )
-tile_type = 1
+tile_type = 2
 
 [node name="23" parent="tiles" instance=ExtResource( 1 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1, -0.00610773, 4 )
@@ -112,7 +110,6 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -7, -0.00610773, 4 )
 
 [node name="29" parent="tiles" instance=ExtResource( 1 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -7, -0.00610773, 2 )
-tile_type = 2
 
 [node name="bottom" type="StaticBody" parent="."]
 input_ray_pickable = false

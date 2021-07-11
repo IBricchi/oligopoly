@@ -152,6 +152,7 @@ func kill():
 	deathtimer.set_wait_time(2)
 	deathtimer.start()
 
+
 func change_money(ammount):
 	money += ammount
 	if ammount > 0:
