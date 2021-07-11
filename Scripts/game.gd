@@ -149,7 +149,7 @@ func _on_queue_chance():
 				"command": command,
 				"val": val
 			})
-    6:
+		6:
 			command = "switch_colour"
 			val = 0
 		_:
