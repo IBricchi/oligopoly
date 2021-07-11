@@ -1,8 +1,8 @@
 extends Control
 
 onready var prompt: Label = $"cont/title/Label"
-onready var mm: Button = $"cont/options/menu/button"
-onready var play: Button = $"cont/options/play/button"
+onready var mm: Button = $"cont/cont/options/menu/button"
+onready var play: Button = $"cont/cont/options/play/button"
 
 func _ready():
 	mm.connect("button_down", self, "_on_mm")

@@ -3,5 +3,5 @@
 [ext_resource path="res://Assets/Fonts/Rajdhani/Rajdhani-Bold.ttf" type="DynamicFontData" id=1]
 
 [resource]
-size = 80
+size = 180
 font_data = ExtResource( 1 )

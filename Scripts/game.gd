@@ -34,7 +34,7 @@ onready var audio : Node = $AudioStreamPlayer
 
 func _ready():
 	# setup UI
-#	randomize()
+	randomize()
 	
 	UI.connect("roll", self, "_on_roll_dice")
 	UI.connect("ti_handled", self, "_on_ti_handled")
@@ -478,12 +478,12 @@ func execute_instruction():
 			var player = instruction.get("player")
 			var val: int = instruction.get("val")
 			change_player_money(player.idx, val)
-			execute_instruction()
+			check_instructions()
 		"loose_money":
 			var player = instruction.get("player")
 			var val: int = instruction.get("val")
 			change_player_money(player.idx, -val)
-			execute_instruction()
+			check_instructions()
 		_:
 			print("Unkown Command '%s'" % command)
 

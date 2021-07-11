@@ -26,59 +26,64 @@ size_flags_vertical = 3
 
 [node name="title" type="CenterContainer" parent="cont"]
 margin_right = 1250.0
-margin_bottom = 343.0
+margin_bottom = 502.0
 mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Label" type="Label" parent="cont/title"]
 margin_left = 110.0
-margin_top = 31.0
+margin_top = 110.0
 margin_right = 1139.0
-margin_bottom = 312.0
+margin_bottom = 391.0
 custom_fonts/font = ExtResource( 2 )
 text = "You ran out of money in 1 turns.
 
 This led to your immediate
 spontaneous combustion."
+align = 1
 
-[node name="options" type="HBoxContainer" parent="cont"]
-margin_top = 347.0
+[node name="cont" type="MarginContainer" parent="cont"]
+margin_top = 506.0
 margin_right = 1250.0
 margin_bottom = 690.0
+custom_constants/margin_top = 60
+custom_constants/margin_bottom = 60
+
+[node name="options" type="HBoxContainer" parent="cont/cont"]
+margin_top = 60.0
+margin_right = 1250.0
+margin_bottom = 124.0
 mouse_filter = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
 
-[node name="menu" type="CenterContainer" parent="cont/options"]
+[node name="menu" type="CenterContainer" parent="cont/cont/options"]
 margin_right = 623.0
-margin_bottom = 343.0
+margin_bottom = 64.0
 mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="button" type="Button" parent="cont/options/menu"]
+[node name="button" type="Button" parent="cont/cont/options/menu"]
 margin_left = 147.0
-margin_top = 139.0
 margin_right = 475.0
-margin_bottom = 203.0
+margin_bottom = 64.0
 custom_fonts/font = ExtResource( 1 )
 text = "Main Menu"
 flat = true
 
-[node name="play" type="CenterContainer" parent="cont/options"]
+[node name="play" type="CenterContainer" parent="cont/cont/options"]
 margin_left = 627.0
 margin_right = 1250.0
-margin_bottom = 343.0
+margin_bottom = 64.0
 mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="button" type="Button" parent="cont/options/play"]
+[node name="button" type="Button" parent="cont/cont/options/play"]
 margin_left = 154.0
-margin_top = 139.0
 margin_right = 468.0
-margin_bottom = 203.0
+margin_bottom = 64.0
 custom_fonts/font = ExtResource( 1 )
 text = "Start Over"
 flat = true

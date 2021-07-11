@@ -54,6 +54,7 @@ mouse_filter = 2
 size_flags_horizontal = 3
 
 [node name="settings" type="CenterContainer" parent="cont/cont/options"]
+visible = false
 margin_right = 623.0
 margin_bottom = 64.0
 mouse_filter = 2
@@ -69,7 +70,6 @@ text = "Settings"
 flat = true
 
 [node name="play" type="CenterContainer" parent="cont/cont/options"]
-margin_left = 627.0
 margin_right = 1250.0
 margin_bottom = 64.0
 mouse_filter = 2
@@ -77,8 +77,8 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="button" type="Button" parent="cont/cont/options/play"]
-margin_left = 240.0
-margin_right = 382.0
+margin_left = 554.0
+margin_right = 696.0
 margin_bottom = 64.0
 custom_fonts/font = ExtResource( 1 )
 text = "Play"
