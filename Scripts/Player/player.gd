@@ -14,6 +14,10 @@ onready var audio_player_lands: Node = $AudioStreamPlayer3D
 onready var particletimer : Node = $Timer
 onready var deathtimer : Node = $Timer2
 
+onready var money_text = $"body_cont/body/money"
+onready var money_text_l: Label = $"body_cont/body/number/cont/val"
+onready var money_text_timer = $money_text_timer
+
 var idx: int
 var time: int
 var tile: int
@@ -54,7 +58,8 @@ func _ready():
 	smoke_particles.emitting = true
 	spark_particles.emitting = true
 	
-func _physics_process(delta):	
+func _physics_process(delta):
+	money_text.look_at($"/root/game/Camera".translation, Vector3.UP)
 	if not target_queue.empty():
 		if not target_queue.front().empty():
 			just_frame = true
@@ -146,13 +151,29 @@ func kill():
 	fire_light.visible = true
 	deathtimer.set_wait_time(2)
 	deathtimer.start()
-	
+
+
+func change_money(ammount):
+	money += ammount
+	if ammount > 0:
+		money_text_l.text = "+€%d" % ammount
+		money_text_l.add_color_override("font_color", Color(0,1,0))
+	else:
+		money_text_l.text = "-€%d" % abs(ammount)
+		money_text_l.add_color_override("font_color", Color(1,0,0))
+	money_text.visible = true
+	money_text_timer.set_wait_time(2)
+	money_text_timer.start()
+
 func _on_Timer_timeout(): ## particletimer
 	emit_signal("player_vanished", idx, check_instr)
-	
 
 func _on_Timer2_timeout(): ### deathtimer
   emit_signal("player_died", idx)
 
 func switch_color():
 	player_mesh.switch_color()
+
+func _on_money_text_timer_timeout():
+	money_text.visible = false
+

@@ -6,7 +6,7 @@ signal buy_property(idx)
 signal confirm_chanceconfirm_chance
 signal debug(t, time)
 
-onready var roll: Button = $"areas/right/cont/Control/roll"
+onready var roll: Button = $"areas/left/list/roll_cont/roll"
 onready var property_popup: Container = $"property_popup"
 onready var chance_popup: Container = $"chance_popup"
 
