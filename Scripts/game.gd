@@ -154,7 +154,8 @@ func _on_queue_chance():
 			val = 0
 		_:
 			print("This should be impossible")
-
+	
+	
 	turn_queue.push_back({
 		"command": "chance_prompt",
 		"action": command,
