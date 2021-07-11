@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=2]
+[gd_scene load_steps=27 format=2]
 
 [ext_resource path="res://Assets/Extra/spark_02.png" type="Texture" id=1]
 [ext_resource path="res://Scripts/Player/player.gd" type="Script" id=2]
@@ -8,6 +8,7 @@
 [ext_resource path="res://Assets/Audio/Meteor_ImpactObject_Stereo_01.wav" type="AudioStream" id=6]
 [ext_resource path="res://Assets/Audio/Meteor_Impactdome_Stereo_01.wav" type="AudioStream" id=7]
 [ext_resource path="res://Assets/Audio/Pawn Lands Effect.wav" type="AudioStream" id=8]
+[ext_resource path="res://Assets/Extra/EuroSymbol.png" type="Texture" id=9]
 
 [sub_resource type="CylinderShape" id=1]
 
@@ -87,6 +88,37 @@ material = SubResource( 10 )
 [sub_resource type="Gradient" id=12]
 offsets = PoolRealArray( 0, 0.0588235, 0.228758, 0.607143, 0.746429, 0.828571, 0.967857 )
 colors = PoolColorArray( 0, 0, 0, 1, 0.0366211, 0.0580788, 0.585938, 1, 0.835938, 0.56935, 0.153473, 1, 0.871094, 0.238934, 0.173538, 1, 0.828955, 0.828955, 0.828955, 1, 0.963108, 0.963108, 0.963108, 1, 0.21875, 0.206787, 0.206787, 1 )
+
+[sub_resource type="StreamTexture" id=13]
+flags = 7
+load_path = "res://.import/EuroSymbol.png-034901da40f3b18f2097c3f27f78fac7.s3tc.stex"
+
+[sub_resource type="SpatialMaterial" id=14]
+flags_transparent = true
+params_diffuse_mode = 4
+params_billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+albedo_color = Color( 0.117647, 0.843137, 0.054902, 1 )
+albedo_texture = SubResource( 13 )
+metallic_specular = 0.0
+
+[sub_resource type="QuadMesh" id=15]
+material = SubResource( 14 )
+
+[sub_resource type="SpatialMaterial" id=16]
+flags_transparent = true
+params_diffuse_mode = 4
+params_billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+albedo_color = Color( 0.933333, 0.145098, 0.0823529, 1 )
+albedo_texture = ExtResource( 9 )
+
+[sub_resource type="QuadMesh" id=17]
+material = SubResource( 16 )
 
 [node name="player" type="KinematicBody"]
 collision_mask = 2
@@ -169,6 +201,60 @@ angular_velocity_random = 1.0
 linear_accel = 1.0
 angle = 360.0
 angle_random = 1.0
+scale_amount = 8.0
+scale_amount_random = 0.7
+scale_amount_curve = SubResource( 6 )
+color_ramp = SubResource( 12 )
+hue_variation = -0.05
+hue_variation_random = 1.0
+
+[node name="Euros_pos" type="CPUParticles" parent="body_cont/body/ParticleBody"]
+emitting = false
+amount = 10
+lifetime = 3.0
+one_shot = true
+explosiveness = 0.5
+randomness = 0.55
+lifetime_randomness = 0.16
+draw_order = 2
+mesh = SubResource( 15 )
+emission_shape = 1
+emission_sphere_radius = 3.0
+direction = Vector3( 1, 1, 0 )
+spread = 0.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 5.0
+initial_velocity_random = 0.1
+angular_velocity = 40.0
+angular_velocity_random = 1.0
+linear_accel = 1.0
+scale_amount = 8.0
+scale_amount_random = 0.7
+scale_amount_curve = SubResource( 6 )
+color_ramp = SubResource( 12 )
+hue_variation = -0.05
+hue_variation_random = 1.0
+
+[node name="Euros_neg" type="CPUParticles" parent="body_cont/body/ParticleBody"]
+emitting = false
+amount = 10
+lifetime = 3.0
+one_shot = true
+explosiveness = 0.5
+randomness = 0.55
+lifetime_randomness = 0.16
+draw_order = 2
+mesh = SubResource( 17 )
+emission_shape = 1
+emission_sphere_radius = 3.0
+direction = Vector3( 1, 1, 0 )
+spread = 0.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 5.0
+initial_velocity_random = 0.1
+angular_velocity = 40.0
+angular_velocity_random = 1.0
+linear_accel = 1.0
 scale_amount = 8.0
 scale_amount_random = 0.7
 scale_amount_curve = SubResource( 6 )

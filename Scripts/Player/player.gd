@@ -5,6 +5,8 @@ onready var body: Spatial = $body_cont/body
 onready var smoke_particles: Node = $body_cont/body/ParticleBody/Smoke
 onready var spark_particles: Node = $body_cont/body/ParticleBody/Spark
 onready var fire_particles: Node = $body_cont/body/ParticleBody/Flame
+onready var green_money_particles: Node = $body_cont/body/ParticleBody/Euros_pos
+onready var red_money_particles: Node = $body_cont/body/ParticleBody/Euros_neg
 onready var fire_light: Node = $OmniLight
 onready var player_mesh: Node = $body_cont/body/player
 onready var vanish_noise: Node = $AudioStreamPlayer
@@ -53,6 +55,9 @@ func _ready():
 	
 	smoke_particles.emitting = true
 	spark_particles.emitting = true
+	
+	red_money_particles.emitting = false
+	green_money_particles.emitting = false
 	
 func _physics_process(delta):	
 	if not target_queue.empty():
@@ -156,3 +161,11 @@ func _on_Timer2_timeout(): ### deathtimer
 
 func switch_color():
 	player_mesh.switch_color()
+
+func money_particles(val : int):
+	if val < 0 : 
+		red_money_particles.amount = int(val/20)
+		red_money_particles.emitting = true
+	else:
+		green_money_particles.amount = int(val/20)
+		green_money_particles.emitting = true

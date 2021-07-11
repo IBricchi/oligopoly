@@ -127,13 +127,14 @@ func _on_queue_chance():
 			val = round(rand_range(1,10))
 		5:
 			command = "move_back"
-			val = round(rand_range(1,10))
-		6:  
+			val = round(rand_range(1,10))		
+		6:
 			command = "switch_colour"
 			val = 0
 		_:
 			print("This should be impossible")
-
+	
+	
 	turn_queue.push_back({
 		"command": "chance_prompt",
 		"action": command,
@@ -439,6 +440,7 @@ func ui_update_times():
 
 func change_player_money(idx: int, ammount: int):
 	players[idx].money += ammount
+	players[idx].money_particles(ammount)
 	if players[idx].money < 0:
 		if idx == 0:
 			player.kill()
